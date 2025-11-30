@@ -6,13 +6,13 @@ import Navbar from "../navbar/navbar";
 import Fab from '@mui/material/Fab';
 
 import { PiCardsBold, PiListBulletsBold } from "react-icons/pi";
-import { Button, Card, Datepicker } from "flowbite-react";
+import { Button, Card, Checkbox, createTheme, Datepicker, ThemeProvider } from "flowbite-react";
 import { IoMdAdd } from "react-icons/io";
 import { TaskFormModal } from "../components/TaskFormModal";
 
 const TasksPage: React.FC = () => {
     //Calendar date management
-    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    //const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
     const handleDateChange = (date: Date | null) => {
         setSelectedDate(date);
@@ -53,12 +53,12 @@ const TasksPage: React.FC = () => {
     };
 
     // Card list sample data
-    const products = [
+    const tasks = [
         {
             id: 1,
             name: 'Product A',
             image: 'https://flowbite.com/docs/images/products/apple-watch.png', // Replace with your image URL
-            description: 'A brief description of Product A.',
+            description: 'A brief description of Product A.sdawadsadwsd dddddddddddd dddddsadasdw qeqeqwesadqweqdd ddddddddd',
             price: '$199',
         },
         {
@@ -74,9 +74,47 @@ const TasksPage: React.FC = () => {
             image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
             description: 'A brief description of Product C.',
             price: '$799',
+        }, {
+            id: 3,
+            name: 'Product C',
+            image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
+            description: 'A brief description of Product C.',
+            price: '$799',
+        }, {
+            id: 3,
+            name: 'Product C',
+            image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
+            description: 'A brief description of Product C.',
+            price: '$799',
+        }, {
+            id: 3,
+            name: 'Product C',
+            image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
+            description: 'A brief description of Product C.',
+            price: '$799',
         },
     ];
 
+    const customTheme = createTheme({
+        card: {
+            "root": {
+                "base": "flex rounded-lg border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800",
+                "children": "flex h-full flex-col justify-start gap-4 p-4",
+                "horizontal": {
+                    "off": "flex-col",
+                    "on": "flex-col md:max-w-xl md:flex-row"
+                },
+                "href": "hover:bg-gray-100 dark:hover:bg-gray-700"
+            },
+            "img": {
+                "base": "",
+                "horizontal": {
+                    "off": "rounded-t-lg",
+                    "on": "h-96 w-full rounded-t-lg object-cover md:h-auto md:w-48 md:rounded-none md:rounded-l-lg"
+                }
+            }
+        }
+    });
     return (
 
         <div className="flex flex-col max-w-full items-center justify-center min-h-screen bg-white">
@@ -92,7 +130,7 @@ const TasksPage: React.FC = () => {
 
                         <div className="flex flex-col items-center p-4">
                             <Datepicker inline onChange={handleDateChange} />
-                            <p className="mt-6 text-lg font-medium">
+                            {/* <p className="mt-6 text-lg font-medium">
                                 **Selected Date:** {selectedDate
                                     ? selectedDate.toLocaleDateString('th-TH', {
                                         weekday: 'long',
@@ -101,7 +139,7 @@ const TasksPage: React.FC = () => {
                                         day: 'numeric'
                                     })
                                     : 'Please select a date.'}
-                            </p>
+                            </p> */}
                         </div>
 
 
@@ -145,8 +183,7 @@ const TasksPage: React.FC = () => {
                                 </button>
 
                             </div>
-                            <p>โหมดการกรอง: {filterMode}</p>
-                            <p>โหมดการแสดงผล: {viewMode}</p>
+
 
                         </div>
 
@@ -154,24 +191,31 @@ const TasksPage: React.FC = () => {
                         <div className="h-11/12 bg-amber-400 p-4 scrollbar-hide overflow-y-auto">
 
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
-                                {products.map((task: { id: React.Key | null | undefined; image: string | undefined; name: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; description: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; price: string | number | bigint | boolean | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | Promise<string | number | bigint | boolean | React.ReactPortal | React.ReactElement<unknown, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | null | undefined> | null | undefined; }) => (
-                                    <Card key={task.id} imgSrc={task.image} horizontal>
-                                        <h5 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                            {task.name}
-                                        </h5>
-                                        <p className="font-normal text-gray-700 dark:text-gray-400">
-                                            {task.description}
-                                        </p>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                                                {task.price}
-                                            </span>
-                                            <Button>
-                                                Add to cart
-                                            </Button>
-                                        </div>
-                                    </Card>
-                                ))}
+                                <ThemeProvider theme={customTheme}>
+                                    {tasks.map((task) => (
+
+                                        <Card key={task.id}>
+
+                                            <div className="flex flex-col h-3/4">
+                                                <h5 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+                                                    {task.name}
+                                                </h5>
+                                                <p className="text-base font-normal text-gray-700 dark:text-gray-400 line-clamp-4">
+                                                    {task.description}
+                                                </p>
+
+                                            </div>
+                                            <div>
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                                                        {task.price}
+                                                    </span>
+                                                    <Checkbox />
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    ))}
+                                </ThemeProvider>
                             </div>
 
 
