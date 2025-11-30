@@ -1,65 +1,83 @@
+"use client";
+import React, { useState } from "react";
 import Image from "next/image";
+import Navbar from "./navbar/navbar";
+import Link from "next/link";
 
-export default function Home() {
+
+const Home: React.FC = () => {
+  //const [count, setCount] = useState(0);
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+    <div className="flex flex-col max-w-full items-center justify-center min-h-screen bg-white">
+      
+      {/* ใช้ Navbar component */}
+      <Navbar />
+
+      <main className="min-h-screen bg-gray-100 flex flex-col items-center px-6">
+
+        {/* Header */}
+        <header className="w-full max-w-5xl py-6 flex justify-between items-center">
+          <h1 className="text-2xl font-bold">TodoList</h1>
+          
+          
+        </header>
+
+
+        {/* Hero Section */}
+        <section className="mt-20 text-center max-w-3xl">
+          <h2 className="text-5xl font-bold mb-4">Manage your tasks easily</h2>
+          <p className="text-gray-600 mb-8 text-lg">
+            A simple To-Do app to help you stay organized and productive every day.
           </p>
+
+          <Link href="/todos"> {/* Replace with your actual todo page path */}
+            <button className="px-7 py-3 bg-blue-600 text-white rounded-xl text-lg hover:bg-blue-700 transition">
+              Start Now
+            </button>
+          </Link>
+        </section>
+
+        {/* Image Section */}
+        <div className="mt-16">
+          <Image
+            src="/todo-illustration.png"
+            alt="Todo Illustration"
+            width={500}
+            height={350}
+            className="rounded-xl shadow-xl"
+          />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+        {/* Features Section */}
+        <section className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl">
+
+          <div className="p-6 bg-white rounded-xl shadow">
+            <h3 className="text-xl font-semibold mb-2">📌 Easy to Add Tasks</h3>
+            <p className="text-gray-600">Add new tasks instantly with a clean UI.</p>
+          </div>
+
+          <div className="p-6 bg-white rounded-xl shadow">
+            <h3 className="text-xl font-semibold mb-2">⏳ Track Your Progress</h3>
+            <p className="text-gray-600">Mark tasks done and boost productivity.</p>
+          </div>
+
+          <div className="p-6 bg-white rounded-xl shadow">
+            <h3 className="text-xl font-semibold mb-2">📱 Works on Any Device</h3>
+            <p className="text-gray-600">Fully responsive design for all screens.</p>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="mt-20 mb-10 text-gray-600">
+          © 2025 TodoList — Built with Next.js + TypeScript
+        </footer>
+
       </main>
+
+
     </div>
   );
-}
+};
+
+export default Home;
