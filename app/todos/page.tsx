@@ -107,7 +107,38 @@ const TasksPage: React.FC = () => {
         return true; // all
     });
 
+    //Function to parse date string "dd/mm/yyyy" to Date object
+    function parseDate(dateStr: string) {
+        const [dayStr, monthStr, yearStr] = dateStr.split('/');
+        const day = parseInt(dayStr, 10);
+        const month = parseInt(monthStr, 10);
+        const year = parseInt(yearStr, 10);
 
+        return new Date(year, month - 1, day);
+
+    }
+
+    //Up comming tasks list (past date) filter
+    const upcommingTasks = tasks.filter(task => {
+        const taskDate = parseDate(task.datetime);
+        const now = new Date();
+
+        now.setHours(0, 0, 0, 0);
+        return taskDate >= now && task.completed === false;
+
+        
+    });
+
+    //Sort upcomming tasks by date ascending
+    upcommingTasks.sort((a, b) => {
+        const dateA = parseDate(a.datetime);
+        const dateB = parseDate(b.datetime);
+
+        return dateA.getTime() - dateB.getTime();
+
+    });
+
+    console.log("Upcomming Tasks:", upcommingTasks);
 
     // ส่วนของการแสดงผล
     const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards');
@@ -158,6 +189,28 @@ const TasksPage: React.FC = () => {
             }
         }
     });
+
+    const customTheme1 = createTheme({
+        card: {
+            "root": {
+                "base": "flex rounded-lg border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800",
+                "children": "flex h-full flex-col justify-start gap-4 p-2",
+                "horizontal": {
+                    "off": "flex-col",
+                    "on": "flex-col md:max-w-xl md:flex-row"
+                },
+                "href": "hover:bg-gray-100 dark:hover:bg-gray-700"
+            },
+            "img": {
+                "base": "",
+                "horizontal": {
+                    "off": "rounded-t-lg",
+                    "on": "h-96 w-full rounded-t-lg object-cover md:h-auto md:w-48 md:rounded-none md:rounded-l-lg"
+                }
+            }
+        }
+    });
+
     return (
 
         <div className="flex flex-col max-w-full items-center justify-center min-h-screen bg-white">
@@ -168,12 +221,15 @@ const TasksPage: React.FC = () => {
                 <div className="flex flex-row h-screen w-full">
 
                     {/* div หลักที่ใช้ขนาด 20% */}
-                    <div className="w-1/5 bg-amber-100 flex flex-col">
+                    <div className="w-1/5 flex flex-col">
                         {/* ส่วนของปฎิทิน */}
 
-                        <div className="flex flex-col items-center p-4">
-                            <Datepicker inline onChange={handleDateChange} />
-                            <p className="mt-6 text-lg font-medium">
+                        <div className="h-4/10 flex flex-col bg-none justify-center border-gray-300">
+
+
+                            <div className="flex flex-col place-items-center pb-4 pt-2 max-h-screen overflow-y-hidden overflow-x-hidden">
+                                <Datepicker inline onChange={handleDateChange} />
+                                {/* <p className="mt-6 text-lg font-medium">
                                 **Selected Date:** {selectedDate
                                     ? selectedDate.toLocaleDateString('en-GB', {
                                         weekday: 'long',
@@ -182,18 +238,152 @@ const TasksPage: React.FC = () => {
                                         day: 'numeric'
                                     })
                                     : 'Please select a date.'}
-                            </p>
+                            </p> */}
+                            </div>
                         </div>
 
-                        <div className="bg-amber-200 p-4 border-t border-gray-300 w-full ">
-                            <a href="https://www.minecraft.net/en-us/" className="flex items-center">
-                  <img src="https://thomasonline.co.nz/wp-content/uploads/2022/06/Minecraft-Logo-Thomas-Online-NZ.jpg" className="h-8 me-3" alt="FlowBite Logo" />
-                  <span className="text-heading self-center text-2xl font-semibold whitespace-nowrap">Upcoming Task</span>
-              </a>
+                        {/* Upcomming task field */}
+                        <div className=" flex flex-col w-full h-6/10 ">
+
+                            {/* Top field of Upcomming task */}
+                            <div className=" w-full h-2/12 justify-center items-center flex px-4">
+                                <h1 className="text-blue-400 font-bold text-3xl border-4 border-spacing-12 p-2 rounded-lg shadow-md bg-white border-blue-400">
+                                    Upcomming task 🗓️
+                                </h1>
+                            </div>
+                            {/* Middle field of Upcomming task */}
+                            <div className=" w-full h-10/12 p-4 overflow-y-auto scrollbar-hide">
+
+
+                                {/* Upcoming task list */}
+                                <div className="flex flex-col gap-4 items-stretch">
+                                    <ThemeProvider theme={customTheme1}>
+                                        {upcommingTasks.slice(0, 4).map((task, index) => (
+
+                                            <Card key={index} className="p-4 hover:scale-[1.025] transition-all duration-300">
+                                                <div className="flex items-center space-x-4 rtl:space-x-reverse">
+
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-sm font-medium text-heading truncate">
+                                                            {task.name}
+                                                        </p>
+                                                        <p className="text-sm text-body truncate">
+                                                            {task.description}
+                                                        </p>
+                                                    </div>
+                                                    <div className="flex flex-col items-center text-base font-semibold text-heading">
+                                                        {task.datetime}
+                                                        <Checkbox color="default" className="mt-2" checked={task.completed} />
+                                                    </div>
+
+
+                                                </div>
+                                            </Card>
+                                        ))}
+                                    </ThemeProvider>
+                                </div>
+                                {/* <ul className="max-w-md divide-y divide-default">
+                                    <li className="pb-3 sm:pb-4">
+                                        <div className="flex items-center space-x-4 rtl:space-x-reverse">
+                                            <div className="shrink-0">
+
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-medium text-heading truncate">
+                                                    Neil Sims
+                                                </p>
+                                                <p className="text-sm text-body truncate">
+                                                    email@flowbite.com
+                                                </p>
+                                            </div>
+                                            <div className="inline-flex items-center text-base font-semibold text-heading">
+                                                $320
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li className="py-3 sm:py-4">
+                                        <div className="flex items-center space-x-4 rtl:space-x-reverse">
+                                            <div className="shrink-0">
+
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-medium text-heading truncate">
+                                                    Bonnie Green
+                                                </p>
+                                                <p className="text-sm text-body truncate">
+                                                    email@flowbite.com
+                                                </p>
+                                            </div>
+                                            <div className="inline-flex items-center text-base font-semibold text-heading">
+                                                $3467
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li className="py-3 sm:py-4">
+                                        <div className="flex items-center space-x-4 rtl:space-x-reverse">
+                                            <div className="shrink-0">
+
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-medium text-heading truncate">
+                                                    Michael Gough
+                                                </p>
+                                                <p className="text-sm text-body truncate">
+                                                    email@flowbite.com
+                                                </p>
+                                            </div>
+                                            <div className="inline-flex items-center text-base font-semibold text-heading">
+                                                $67
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li className="py-3 sm:py-4">
+                                        <div className="flex items-center space-x-4 rtl:space-x-reverse">
+                                            <div className="shrink-0">
+
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-medium text-heading truncate">
+                                                    Thomas Lean
+                                                </p>
+                                                <p className="text-sm text-body truncate">
+                                                    email@flowbite.com
+                                                </p>
+                                            </div>
+                                            <div className="inline-flex items-center text-base font-semibold text-heading">
+                                                $2367
+                                            </div>
+                                        </div>
+                                    </li>
+                                    <li className="pt-3 pb-0 sm:pt-4">
+                                        <div className="flex items-center space-x-4 rtl:space-x-reverse">
+                                            <div className="shrink-0">
+
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-medium text-heading truncate">
+                                                    Lana Byrd
+                                                </p>
+                                                <p className="text-sm text-body truncate">
+                                                    email@flowbite.com
+                                                </p>
+                                            </div>
+                                            <div className="inline-flex items-center text-base font-semibold text-heading">
+                                                $367
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul> */}
+
+
+                            </div>
+
+                            {/* Bottom field of Upcomming task */}
+                            <div className="bg-amber-300 w-full h-1/12">
+
+                            </div>
+
                         </div>
-
-
-
 
                     </div>
                     {/* div หลักที่ใช้ขนาด 80% */}
@@ -202,8 +392,6 @@ const TasksPage: React.FC = () => {
                         {/* เนื้อหาของหน้าจัดการงาน (Tasks Management) */}
 
                         <div className="h-1/12 p-4 items-center flex justify-between">
-
-
 
                             {/* Task filtering button */}
                             <div className="inline-flex shadow-lg rounded-lg">
@@ -291,12 +479,12 @@ const TasksPage: React.FC = () => {
                                                                     🗑️ Delete
                                                                 </button>
                                                             </div>
-                                                            <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                                                                {/* {task.price} */}
-                                                            </span>
+                                                            {/* <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                                                                {task.price}
+                                                            </span> */}
 
                                                             <div className="me-2">
-                                                                <Checkbox color="default" />
+                                                                <Checkbox color="default" checked={task.completed} />
                                                             </div>
 
                                                         </div>
