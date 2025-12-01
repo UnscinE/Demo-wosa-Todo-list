@@ -5,12 +5,65 @@ import { useState } from "react";
 import Navbar from "../navbar/navbar";
 import Fab from '@mui/material/Fab';
 
+
 import { PiCardsBold, PiListBulletsBold } from "react-icons/pi";
 import { Button, Card, Checkbox, createTheme, Datepicker, ThemeProvider } from "flowbite-react";
 import { IoMdAdd } from "react-icons/io";
 import { TaskFormModal } from "../components/TaskFormModal";
+import { AnimatePresence, motion } from "framer-motion";
 
 const TasksPage: React.FC = () => {
+
+    //Sample tasks data
+    // Card list sample data
+    const tasks = [
+        {
+            id: 1,
+            name: 'Product A',
+            image: 'https://flowbite.com/docs/images/products/apple-watch.png', // Replace with your image URL
+            description: 'A brief description of Product A.sdawadsadwsd dddddddddddd dddddsadasdw qeqeqwesadqweqdd ddddddddd',
+            price: '$199',
+            completed: false,
+        },
+        {
+            id: 2,
+            name: 'Product B',
+            image: 'https://flowbite.com/docs/images/products/imac.png', // Replace with your image URL
+            description: 'A brief description of Product B.',
+            price: '$1299',
+            completed: true
+        },
+        {
+            id: 3,
+            name: 'Product C',
+            image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
+            description: 'A brief description of Product C.',
+            price: '$799',
+            completed: false
+        }, {
+            id: 3,
+            name: 'Product C',
+            image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
+            description: 'A brief description of Product C.',
+            price: '$799',
+            completed: false
+        }, {
+            id: 3,
+            name: 'Product C',
+            image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
+            description: 'A brief description of Product C.',
+            price: '$799',
+            completed: false
+        }, {
+            id: 3,
+            name: 'Product C',
+            image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
+            description: 'A brief description of Product C.',
+            price: '$799',
+            completed: false
+        },
+    ];
+
     //Calendar date management
     //const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
@@ -28,9 +81,18 @@ const TasksPage: React.FC = () => {
 
     //ส่วนของการกรอง tasks
     const [filterMode, setFilterMode] = useState<'all' | 'complete' | 'incomplete'>('all');
-
+    const filteredTasks = tasks.filter(task => {
+        if (filterMode === "complete") return task.completed === true;
+        if (filterMode === "incomplete") return task.completed === false;
+        return true; // all
+    });
     // ส่วนของการแสดงผล
     const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards');
+    const getViewClass = () => {
+        return viewMode === "cards"
+        ? "grid gird-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+        : "flex flex-col gap-4";
+    };
 
     // ฟังก์ชันสำหรับกำหนดคลาส Active
     const getButtonClass = (isActive: boolean) => isActive
@@ -52,49 +114,7 @@ const TasksPage: React.FC = () => {
         setIsModalOpen(false); // ปิด Modal
     };
 
-    // Card list sample data
-    const tasks = [
-        {
-            id: 1,
-            name: 'Product A',
-            image: 'https://flowbite.com/docs/images/products/apple-watch.png', // Replace with your image URL
-            description: 'A brief description of Product A.sdawadsadwsd dddddddddddd dddddsadasdw qeqeqwesadqweqdd ddddddddd',
-            price: '$199',
-        },
-        {
-            id: 2,
-            name: 'Product B',
-            image: 'https://flowbite.com/docs/images/products/imac.png', // Replace with your image URL
-            description: 'A brief description of Product B.',
-            price: '$1299',
-        },
-        {
-            id: 3,
-            name: 'Product C',
-            image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
-            description: 'A brief description of Product C.',
-            price: '$799',
-        }, {
-            id: 3,
-            name: 'Product C',
-            image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
-            description: 'A brief description of Product C.',
-            price: '$799',
-        }, {
-            id: 3,
-            name: 'Product C',
-            image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
-            description: 'A brief description of Product C.',
-            price: '$799',
-        }, {
-            id: 3,
-            name: 'Product C',
-            image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
-            description: 'A brief description of Product C.',
-            price: '$799',
-        },
-    ];
-
+    // Custom theme for cards
     const customTheme = createTheme({
         card: {
             "root": {
@@ -146,11 +166,11 @@ const TasksPage: React.FC = () => {
 
                     </div>
                     {/* div หลักที่ใช้ขนาด 75% */}
-                    <div className="w-3/4 bg-amber-300 flex flex-col">
+                    <div className="w-3/4  flex flex-col">
 
                         {/* เนื้อหาของหน้าจัดการงาน (Tasks Management) */}
 
-                        <div className="h-1/12 bg-amber-600 p-4 items-center flex justify-between">
+                        <div className="h-1/12 p-4 items-center flex justify-between">
 
 
 
@@ -188,33 +208,48 @@ const TasksPage: React.FC = () => {
                         </div>
 
                         {/* Section 2: 80% width, full height */}
-                        <div className="h-11/12 bg-amber-400 p-4 scrollbar-hide overflow-y-auto">
+                        <div className="h-11/12 p-4 scrollbar-hide overflow-y-auto">
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 ">
+                            <div className={`${getViewClass()} items-stretch`}>
                                 <ThemeProvider theme={customTheme}>
-                                    {tasks.map((task) => (
+                                    <AnimatePresence mode="wait">
+                                        {filteredTasks.map((task, index) => (
 
-                                        <Card key={task.id}>
+                                            <motion.div
+                                                key={task.id + filterMode + viewMode} // เพิ่ม filterMode และ viewMode เป็นส่วนหนึ่งของ key เพื่อบังคับให้ React รีเรนเดอร์เมื่อเปลี่ยนโหมด
+                                                
+                                                initial={{ opacity: 0, y: 30 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -20 }}
+                                                transition={{
+                                                    duration: 0.5,
+                                                    delay: index * 0.1,   // ให้ card ลอยขึ้นทีละใบ
 
-                                            <div className="flex flex-col h-3/4">
-                                                <h5 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
-                                                    {task.name}
-                                                </h5>
-                                                <p className="text-base font-normal text-gray-700 dark:text-gray-400 line-clamp-4">
-                                                    {task.description}
-                                                </p>
+                                                }}
+                                            >
+                                                <Card className="hover:scale-[1.025] transition-all duration-300 h-full flex flex-col">
+                                                    <div className="flex flex-col h-3/4">
+                                                        <h5 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+                                                            {task.name}
+                                                        </h5>
+                                                        <p className="text-base font-normal text-gray-700 dark:text-gray-400 line-clamp-4">
+                                                            {task.description}
+                                                        </p>
+                                                    </div>
 
-                                            </div>
-                                            <div>
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                                                        {task.price}
-                                                    </span>
-                                                    <Checkbox />
-                                                </div>
-                                            </div>
-                                        </Card>
-                                    ))}
+                                                    <div>
+                                                        <div className="flex items-center justify-between">
+                                                            <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                                                                {/* {task.price} */}
+                                                            </span>
+                                                            <Checkbox />
+                                                        </div>
+                                                    </div>
+                                                </Card>
+                                            </motion.div>
+
+                                        ))}
+                                    </AnimatePresence>
                                 </ThemeProvider>
                             </div>
 
