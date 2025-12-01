@@ -1,17 +1,16 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { useState } from "react";
 import Navbar from "../navbar/navbar";
 import Fab from '@mui/material/Fab';
 
 
 import { PiCardsBold, PiListBulletsBold } from "react-icons/pi";
-import { Button, Card, Checkbox, createTheme, Datepicker, ThemeProvider } from "flowbite-react";
+import { Card, Checkbox, createTheme, Datepicker, ThemeProvider } from "flowbite-react";
 import { IoAdd } from "react-icons/io5";
 import { TaskFormModal } from "../components/TaskFormModal";
 import { AnimatePresence, motion } from "framer-motion";
-import { AiOutlineSchedule } from "react-icons/ai";
 
 const TasksPage: React.FC = () => {
 
@@ -126,7 +125,7 @@ const TasksPage: React.FC = () => {
         now.setHours(0, 0, 0, 0);
         return taskDate >= now && task.completed === false;
 
-        
+
     });
 
     //Sort upcomming tasks by date ascending
@@ -140,7 +139,7 @@ const TasksPage: React.FC = () => {
 
     console.log("Upcomming Tasks:", upcommingTasks);
 
-    // ส่วนของการแสดงผล
+    // View mode change function
     const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards');
     const getViewClass = () => {
         return viewMode === "cards"
@@ -148,13 +147,13 @@ const TasksPage: React.FC = () => {
             : "flex flex-col gap-4";
     };
 
-    // ฟังก์ชันสำหรับกำหนดคลาส Active
+    // Active button function
     const getButtonClass = (isActive: boolean) => isActive
         ? 'bg-blue-300 hover:bg-blue-700 text-white' //Active State: Blue Backgruond with white text
         : 'bg-gray-300 hover:bg-gray-400 text-gray-800';//Active State: gray Backgruond with gray text
 
     // FAB handler
-    // State สำหรับควบคุมการเปิด/ปิด Modal
+    // State for on/off Modal
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // ฟังก์ชันที่ถูกเรียกเมื่อปุ่ม FAB ถูกคลิก
@@ -190,6 +189,7 @@ const TasksPage: React.FC = () => {
         }
     });
 
+    // Custom theme for upcomming task cards
     const customTheme1 = createTheme({
         card: {
             "root": {
@@ -258,28 +258,43 @@ const TasksPage: React.FC = () => {
                                 {/* Upcoming task list */}
                                 <div className="flex flex-col gap-4 items-stretch">
                                     <ThemeProvider theme={customTheme1}>
-                                        {upcommingTasks.slice(0, 4).map((task, index) => (
+                                        <AnimatePresence mode="popLayout">
+                                            {upcommingTasks.slice(0, 5).map((task, index) => (
 
-                                            <Card key={index} className="p-4 hover:scale-[1.025] transition-all duration-300">
-                                                <div className="flex items-center space-x-4 rtl:space-x-reverse">
+                                                <motion.div
+                                                key={task.id}
+                                                layout
+                                                initial={{ opacity: 0, y: 30 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -20 }}
+                                                transition={{
+                                                    duration: 0.5,
+                                                    delay: index * 0.1,
+                                                }}
+                                                >
+                                                    <Card key={index} className="p-4 hover:scale-[1.025] transition-all duration-300">
+                                                        <div className="flex items-center space-x-4 rtl:space-x-reverse">
 
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className="text-sm font-medium text-heading truncate">
-                                                            {task.name}
-                                                        </p>
-                                                        <p className="text-sm text-body truncate">
-                                                            {task.description}
-                                                        </p>
-                                                    </div>
-                                                    <div className="flex flex-col items-center text-base font-semibold text-heading">
-                                                        {task.datetime}
-                                                        <Checkbox color="default" className="mt-2" checked={task.completed} />
-                                                    </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <p className="text-sm font-medium text-heading truncate">
+                                                                    {task.name}
+                                                                </p>
+                                                                <p className="text-sm text-body truncate">
+                                                                    {task.description}
+                                                                </p>
+                                                            </div>
+                                                            <div className="flex flex-col items-center text-base font-semibold text-heading">
+                                                                {task.datetime}
+                                                                <Checkbox color="default" className="mt-2" defaultChecked={task.completed} />
+                                                            </div>
 
 
-                                                </div>
-                                            </Card>
-                                        ))}
+                                                        </div>
+                                                    </Card>
+                                                </motion.div>
+
+                                            ))}
+                                        </AnimatePresence>
                                     </ThemeProvider>
                                 </div>
                                 {/* <ul className="max-w-md divide-y divide-default">
@@ -379,9 +394,9 @@ const TasksPage: React.FC = () => {
                             </div>
 
                             {/* Bottom field of Upcomming task */}
-                            <div className="bg-amber-300 w-full h-1/12">
+                            {/* <div className="bg-amber-300 w-full h-1/12">
 
-                            </div>
+                            </div> */}
 
                         </div>
 
@@ -455,11 +470,10 @@ const TasksPage: React.FC = () => {
                                                             <h5 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
                                                                 {task.name}
                                                             </h5>
-                                                            <p>
-                                                                📌
+                                                            <p className="text-lg font-lg text-gray-500 dark:text-gray-400">
+                                                                {task.datetime} 📌
                                                             </p>
                                                         </div>
-
 
                                                         <p className="text-base font-normal text-gray-700 dark:text-gray-400 line-clamp-4 min-h-24">
                                                             {task.description}
@@ -484,7 +498,7 @@ const TasksPage: React.FC = () => {
                                                             </span> */}
 
                                                             <div className="me-2">
-                                                                <Checkbox color="default" checked={task.completed} />
+                                                                <Checkbox color="default" defaultChecked={task.completed} />
                                                             </div>
 
                                                         </div>
