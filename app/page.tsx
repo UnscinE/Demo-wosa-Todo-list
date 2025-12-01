@@ -17,7 +17,7 @@ const Home: React.FC = () => {
       <main className="min-h-screen bg-gray-100 flex flex-col items-center px-6">
 
         {/* Header */}
-        <header className="w-full max-w-5xl py-6 flex justify-between items-center">
+        <header className="w-full max-w-5xl py-6 flex justify-center items-center">
           <h1 className="text-2xl font-bold">TodoList</h1>
           
           

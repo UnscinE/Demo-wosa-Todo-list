@@ -1,5 +1,6 @@
 // navbar.tsx
 import React from "react";
+import Image from "next/image";
 import Logo from "../../public/logo.png";
 import { FaBars } from "react-icons/fa";
 import Link from "next/link";
@@ -15,10 +16,18 @@ const Navbar: React.FC = () => {
     return (
         <header className='bg-black text-white w-full z-50'>
             <nav className='flex items-center justify-between px-12 h-18'>
-                <a href='#' className="text-2xl font-bold border-2 px-2 py-1">LOGO</a>
+                
+                <a href='#' className="text-2xl font-bold px-2 py-1">
+                    
+                    <Image
+                                src="/image.png"
+                                alt="Todo Illustration"
+                                width={60}
+                                height={60}
+                                className="rounded-xl shadow-xl"
+                              /></a>
+                    
 
-                {/* --- 🛑 THE FIX IS HERE 🛑 --- */}
-                {/* Use a template literal to conditionally add the 'hidden' class */}
                 <div
                     className={`absolute left-0 top-18 bg-black w-full
                      flex flex-col items-center gap-2 font-bold text-lg 

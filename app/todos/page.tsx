@@ -441,7 +441,7 @@ const TasksPage: React.FC = () => {
 
                         </div>
 
-                        {/* Section 2: 80% width, full height */}
+                        {/* Task List */}
                         <div className="h-11/12 p-4 scrollbar-hide overflow-y-auto">
 
                             <div className={`${getViewClass()} items-stretch`}>
