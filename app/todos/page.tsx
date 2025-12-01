@@ -8,9 +8,10 @@ import Fab from '@mui/material/Fab';
 
 import { PiCardsBold, PiListBulletsBold } from "react-icons/pi";
 import { Button, Card, Checkbox, createTheme, Datepicker, ThemeProvider } from "flowbite-react";
-import { IoMdAdd } from "react-icons/io";
+import { IoAdd } from "react-icons/io5";
 import { TaskFormModal } from "../components/TaskFormModal";
 import { AnimatePresence, motion } from "framer-motion";
+import { AiOutlineSchedule } from "react-icons/ai";
 
 const TasksPage: React.FC = () => {
 
@@ -21,9 +22,10 @@ const TasksPage: React.FC = () => {
             id: 1,
             name: 'Product A',
             image: 'https://flowbite.com/docs/images/products/apple-watch.png', // Replace with your image URL
-            description: 'A brief description of Product A.sdawadsadwsd dddddddddddd dddddsadasdw qeqeqwesadqweqdd ddddddddd',
+            description: 'A brief description of Product A.sdawadsadwsd dddddddddddd dddddsadasdw qeqeqwesadqweqdd ddddddddd fkefkekfkk kkkkefkkfek kkerkwrewkrdflsd kksdfksfkekwkwekr kwkerkwerkwekrk wkerkwerkkwdflsdk;f wepw[er kq eporwk pweorkpwekrpo [qer poqkewrkpqwerokwer w[qerk weropwqerkwpr[ kqwrkowoqkqp werwer',
             price: '$199',
             completed: false,
+            datetime: "19/12/2025"
         },
         {
             id: 2,
@@ -31,7 +33,8 @@ const TasksPage: React.FC = () => {
             image: 'https://flowbite.com/docs/images/products/imac.png', // Replace with your image URL
             description: 'A brief description of Product B.',
             price: '$1299',
-            completed: true
+            completed: true,
+            datetime: "20/12/2025"
         },
         {
             id: 3,
@@ -39,33 +42,37 @@ const TasksPage: React.FC = () => {
             image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
             description: 'A brief description of Product C.',
             price: '$799',
-            completed: false
+            completed: false,
+            datetime: "21/12/2025"
         }, {
-            id: 3,
+            id: 4,
             name: 'Product C',
             image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
             description: 'A brief description of Product C.',
             price: '$799',
-            completed: false
+            completed: false,
+            datetime: "24/12/2025"
         }, {
-            id: 3,
+            id: 5,
             name: 'Product C',
             image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
             description: 'A brief description of Product C.',
             price: '$799',
-            completed: false
+            completed: false,
+            datetime: "24/12/2025"
         }, {
-            id: 3,
+            id: 6,
             name: 'Product C',
             image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
             description: 'A brief description of Product C.',
             price: '$799',
-            completed: false
+            completed: false,
+            datetime: "24/12/2025"
         },
     ];
 
     //Calendar date management
-    //const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
     const handleDateChange = (date: Date | null) => {
         setSelectedDate(date);
@@ -74,24 +81,40 @@ const TasksPage: React.FC = () => {
             // You can immediately use the date here, e.g., for API calls or logging
             console.log('New Date Selected (Date object):', date);
             console.log('Formatted Date String (TH):', date.toLocaleDateString('th-TH'));
+            console.log('Formatted Date String (EN):', date.toDateString());
         } else {
             console.log('No date selected.');
         }
     };
 
-    //ส่วนของการกรอง tasks
+    //Filter tasks by selected date
+    const filteredByDateTasks = tasks.filter(task => {
+        // If no date selected, show all tasks
+        if (!selectedDate) return true;
+
+        if (selectedDate) return task.datetime === selectedDate.toLocaleDateString('en-GB');
+    });
+
+    //ส่วนของการกรอง tasks [complete / incomplete /all]
     const [filterMode, setFilterMode] = useState<'all' | 'complete' | 'incomplete'>('all');
-    const filteredTasks = tasks.filter(task => {
+    const filteredTasks = filteredByDateTasks.filter(task => {
+        // Return tasks with task.completed === true
         if (filterMode === "complete") return task.completed === true;
+        // Return tasks with task.completed === false
         if (filterMode === "incomplete") return task.completed === false;
+
+        //else
         return true; // all
     });
+
+
+
     // ส่วนของการแสดงผล
     const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards');
     const getViewClass = () => {
         return viewMode === "cards"
-        ? "grid gird-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-        : "flex flex-col gap-4";
+            ? "grid gird-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+            : "flex flex-col gap-4";
     };
 
     // ฟังก์ชันสำหรับกำหนดคลาส Active
@@ -144,29 +167,37 @@ const TasksPage: React.FC = () => {
             <main className="min-h-screen bg-gray-100 flex flex-col items-center w-full">
                 <div className="flex flex-row h-screen w-full">
 
-                    {/* div หลักที่ใช้ขนาด 25% */}
-                    <div className="w-1/4 bg-amber-100 flex flex-col">
+                    {/* div หลักที่ใช้ขนาด 20% */}
+                    <div className="w-1/5 bg-amber-100 flex flex-col">
                         {/* ส่วนของปฎิทิน */}
 
                         <div className="flex flex-col items-center p-4">
                             <Datepicker inline onChange={handleDateChange} />
-                            {/* <p className="mt-6 text-lg font-medium">
+                            <p className="mt-6 text-lg font-medium">
                                 **Selected Date:** {selectedDate
-                                    ? selectedDate.toLocaleDateString('th-TH', {
+                                    ? selectedDate.toLocaleDateString('en-GB', {
                                         weekday: 'long',
                                         year: 'numeric',
-                                        month: 'long',
+                                        month: 'numeric',
                                         day: 'numeric'
                                     })
                                     : 'Please select a date.'}
-                            </p> */}
+                            </p>
+                        </div>
+
+                        <div className="bg-amber-200 p-4 border-t border-gray-300 w-full ">
+                            <a href="https://www.minecraft.net/en-us/" className="flex items-center">
+                  <img src="https://thomasonline.co.nz/wp-content/uploads/2022/06/Minecraft-Logo-Thomas-Online-NZ.jpg" className="h-8 me-3" alt="FlowBite Logo" />
+                  <span className="text-heading self-center text-2xl font-semibold whitespace-nowrap">Upcoming Task</span>
+              </a>
                         </div>
 
 
 
+
                     </div>
-                    {/* div หลักที่ใช้ขนาด 75% */}
-                    <div className="w-3/4  flex flex-col">
+                    {/* div หลักที่ใช้ขนาด 80% */}
+                    <div className="w-4/5  flex flex-col">
 
                         {/* เนื้อหาของหน้าจัดการงาน (Tasks Management) */}
 
@@ -175,7 +206,7 @@ const TasksPage: React.FC = () => {
 
 
                             {/* Task filtering button */}
-                            <div className="inline-flex shadow-md">
+                            <div className="inline-flex shadow-lg rounded-lg">
                                 <button onClick={() => setFilterMode('all')}
                                     className={`font-bold py-2 px-4 rounded-l-lg transition ${getButtonClass(filterMode === 'all')}`}> {/* Class for LEFT roundness */}
                                     All
@@ -191,7 +222,7 @@ const TasksPage: React.FC = () => {
                             </div>
 
                             {/* Switch task view mode*/}
-                            <div className="inline-flex shadow-md">
+                            <div className="inline-flex shadow-lg rounded-lg">
 
                                 <button onClick={() => setViewMode('cards')}
                                     className={`font-bold py-2 px-4 rounded-l-lg transition ${getButtonClass(viewMode === 'cards')}`}> {/* Class for LEFT roundness */}
@@ -212,12 +243,12 @@ const TasksPage: React.FC = () => {
 
                             <div className={`${getViewClass()} items-stretch`}>
                                 <ThemeProvider theme={customTheme}>
-                                    <AnimatePresence mode="wait">
+                                    <AnimatePresence mode="popLayout">
                                         {filteredTasks.map((task, index) => (
 
                                             <motion.div
                                                 key={task.id + filterMode + viewMode} // เพิ่ม filterMode และ viewMode เป็นส่วนหนึ่งของ key เพื่อบังคับให้ React รีเรนเดอร์เมื่อเปลี่ยนโหมด
-                                                
+                                                layout
                                                 initial={{ opacity: 0, y: 30 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 exit={{ opacity: 0, y: -20 }}
@@ -229,20 +260,45 @@ const TasksPage: React.FC = () => {
                                             >
                                                 <Card className="hover:scale-[1.025] transition-all duration-300 h-full flex flex-col">
                                                     <div className="flex flex-col h-3/4">
-                                                        <h5 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
-                                                            {task.name}
-                                                        </h5>
-                                                        <p className="text-base font-normal text-gray-700 dark:text-gray-400 line-clamp-4">
+
+                                                        <div className="justify-between flex flex-row">
+
+
+                                                            <h5 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+                                                                {task.name}
+                                                            </h5>
+                                                            <p>
+                                                                📌
+                                                            </p>
+                                                        </div>
+
+
+                                                        <p className="text-base font-normal text-gray-700 dark:text-gray-400 line-clamp-4 min-h-24">
                                                             {task.description}
                                                         </p>
                                                     </div>
 
-                                                    <div>
+                                                    <div className="mt-auto">
                                                         <div className="flex items-center justify-between">
+                                                            <div className="flex-row flex-wrap gap-2 inline-flex">
+                                                                <button type="button" className="text-white bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 rounded-xl">
+                                                                    📋 View
+                                                                </button>
+                                                                <button type="button" className="text-white bg-[#7ba3fa] hover:bg-[#7ba3fa]/90 focus:ring-4 focus:outline-none focus:ring-[#7ba3fa]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#7ba3fa]/55 rounded-xl">
+                                                                    ✏️ Edit
+                                                                </button>
+                                                                <button type="button" className="text-white hover:text-black bg-[#d8d8d8] hover:bg-[#bfbfbf]/90 focus:ring-4 focus:outline-none focus:ring-[#bfbfbf]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#7ba3fa]/55 rounded-xl">
+                                                                    🗑️ Delete
+                                                                </button>
+                                                            </div>
                                                             <span className="text-3xl font-bold text-gray-900 dark:text-white">
                                                                 {/* {task.price} */}
                                                             </span>
-                                                            <Checkbox />
+
+                                                            <div className="me-2">
+                                                                <Checkbox color="default" />
+                                                            </div>
+
                                                         </div>
                                                     </div>
                                                 </Card>
@@ -271,11 +327,11 @@ const TasksPage: React.FC = () => {
                     onClick={handleClick}
                     sx={{
                         position: 'fixed', // Keep it fixed relative to the viewport
-                        bottom: 32,
+                        bottom: 64,
                         right: 64,
                     }}
                 >
-                    <IoMdAdd className="w-8 h-8" />
+                    <IoAdd className="w-8 h-8" />
 
                 </Fab>
 
