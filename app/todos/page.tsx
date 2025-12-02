@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import Navbar from "../navbar/navbar";
 import Fab from '@mui/material/Fab';
@@ -16,7 +16,7 @@ const TasksPage: React.FC = () => {
 
     //Sample tasks data
     // Card list sample data
-    const tasks = [
+    const tasksmock = [
         {
             id: 1,
             name: 'Product A',
@@ -69,6 +69,30 @@ const TasksPage: React.FC = () => {
             datetime: "24/12/2025"
         },
     ];
+
+    //Data preparation using useState local storage
+
+    // Task type definition
+    type Task = {
+        id: number;
+        name: string;
+        image: string;
+        description: string;
+        price: string;
+        completed: boolean;
+        datetime: string;
+    };
+
+    const [tasks, setTasksData] = useState<Task[]>([]);
+
+    useEffect(() => {
+        const storeTasks = localStorage.getItem('to-do-list-tasks');
+
+        if (!storeTasks) {
+            setTasksData(tasksmock);
+        }
+    }, []);
+
 
     //Calendar date management
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -155,17 +179,35 @@ const TasksPage: React.FC = () => {
     // FAB handler
     // State for on/off Modal
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    // ฟังก์ชันที่ถูกเรียกเมื่อปุ่ม FAB ถูกคลิก
-    const handleClick = () => {
-        console.log('FAB clicked! Opening Modal...');
-        setIsModalOpen(true); // เปิด Modal
-    };
-
     // ฟังก์ชันสำหรับปิด Modal
     const handleCloseModal = () => {
         setIsModalOpen(false); // ปิด Modal
     };
+
+    //Task in modal handle
+    const [taskInmodal, setTaskInmodal] = useState<Task | undefined>(undefined);
+
+    // Modal form mode
+    const [formMode, setFormMode] = useState<'view' | 'add' | 'edit' | 'close'>('close')
+
+    // ฟังก์ชันที่ถูกเรียกเมื่อปุ่ม FAB ถูกคลิก
+    const handleClick = (mode: 'view' | 'add' | 'edit' | 'close', taskToView_Edit_Delete?: Task) => {
+        
+        setTaskInmodal(taskToView_Edit_Delete)
+        
+        setIsModalOpen(true)
+        if (mode === 'add') {
+            setFormMode(mode)
+
+        } else if (mode === 'view') {
+            setFormMode(mode)
+        }if (mode === 'edit') {
+            setFormMode(mode)
+        }
+
+    };
+
+
 
     // Custom theme for cards
     const customTheme = createTheme({
@@ -262,15 +304,15 @@ const TasksPage: React.FC = () => {
                                             {upcommingTasks.slice(0, 5).map((task, index) => (
 
                                                 <motion.div
-                                                key={task.id}
-                                                layout
-                                                initial={{ opacity: 0, y: 30 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: -20 }}
-                                                transition={{
-                                                    duration: 0.5,
-                                                    delay: index * 0.1,
-                                                }}
+                                                    key={task.id}
+                                                    layout
+                                                    initial={{ opacity: 0, y: 30 }}
+                                                    animate={{ opacity: 1, y: 0 }}
+                                                    exit={{ opacity: 0, y: -20 }}
+                                                    transition={{
+                                                        duration: 0.5,
+                                                        delay: index * 0.1,
+                                                    }}
                                                 >
                                                     <Card key={index} className="p-4 hover:scale-[1.025] transition-all duration-300">
                                                         <div className="flex items-center space-x-4 rtl:space-x-reverse">
@@ -297,99 +339,6 @@ const TasksPage: React.FC = () => {
                                         </AnimatePresence>
                                     </ThemeProvider>
                                 </div>
-                                {/* <ul className="max-w-md divide-y divide-default">
-                                    <li className="pb-3 sm:pb-4">
-                                        <div className="flex items-center space-x-4 rtl:space-x-reverse">
-                                            <div className="shrink-0">
-
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-heading truncate">
-                                                    Neil Sims
-                                                </p>
-                                                <p className="text-sm text-body truncate">
-                                                    email@flowbite.com
-                                                </p>
-                                            </div>
-                                            <div className="inline-flex items-center text-base font-semibold text-heading">
-                                                $320
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li className="py-3 sm:py-4">
-                                        <div className="flex items-center space-x-4 rtl:space-x-reverse">
-                                            <div className="shrink-0">
-
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-heading truncate">
-                                                    Bonnie Green
-                                                </p>
-                                                <p className="text-sm text-body truncate">
-                                                    email@flowbite.com
-                                                </p>
-                                            </div>
-                                            <div className="inline-flex items-center text-base font-semibold text-heading">
-                                                $3467
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li className="py-3 sm:py-4">
-                                        <div className="flex items-center space-x-4 rtl:space-x-reverse">
-                                            <div className="shrink-0">
-
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-heading truncate">
-                                                    Michael Gough
-                                                </p>
-                                                <p className="text-sm text-body truncate">
-                                                    email@flowbite.com
-                                                </p>
-                                            </div>
-                                            <div className="inline-flex items-center text-base font-semibold text-heading">
-                                                $67
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li className="py-3 sm:py-4">
-                                        <div className="flex items-center space-x-4 rtl:space-x-reverse">
-                                            <div className="shrink-0">
-
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-heading truncate">
-                                                    Thomas Lean
-                                                </p>
-                                                <p className="text-sm text-body truncate">
-                                                    email@flowbite.com
-                                                </p>
-                                            </div>
-                                            <div className="inline-flex items-center text-base font-semibold text-heading">
-                                                $2367
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li className="pt-3 pb-0 sm:pt-4">
-                                        <div className="flex items-center space-x-4 rtl:space-x-reverse">
-                                            <div className="shrink-0">
-
-                                            </div>
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-heading truncate">
-                                                    Lana Byrd
-                                                </p>
-                                                <p className="text-sm text-body truncate">
-                                                    email@flowbite.com
-                                                </p>
-                                            </div>
-                                            <div className="inline-flex items-center text-base font-semibold text-heading">
-                                                $367
-                                            </div>
-                                        </div>
-                                    </li>
-                                </ul> */}
-
 
                             </div>
 
@@ -483,10 +432,10 @@ const TasksPage: React.FC = () => {
                                                     <div className="mt-auto">
                                                         <div className="flex items-center justify-between">
                                                             <div className="flex-row flex-wrap gap-2 inline-flex">
-                                                                <button type="button" className="text-white bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 rounded-xl">
+                                                                <button type="button" onClick={() => handleClick("view", task)} className="text-white bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 rounded-xl">
                                                                     📋 View
                                                                 </button>
-                                                                <button type="button" className="text-white bg-[#7ba3fa] hover:bg-[#7ba3fa]/90 focus:ring-4 focus:outline-none focus:ring-[#7ba3fa]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#7ba3fa]/55 rounded-xl">
+                                                                <button type="button" onClick={() => handleClick("edit", task)} className="text-white bg-[#7ba3fa] hover:bg-[#7ba3fa]/90 focus:ring-4 focus:outline-none focus:ring-[#7ba3fa]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#7ba3fa]/55 rounded-xl">
                                                                     ✏️ Edit
                                                                 </button>
                                                                 <button type="button" className="text-white hover:text-black bg-[#d8d8d8] hover:bg-[#bfbfbf]/90 focus:ring-4 focus:outline-none focus:ring-[#bfbfbf]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#7ba3fa]/55 rounded-xl">
@@ -511,13 +460,7 @@ const TasksPage: React.FC = () => {
                                 </ThemeProvider>
                             </div>
 
-
-
                         </div>
-
-
-
-
 
                     </div>
                 </div>
@@ -526,7 +469,7 @@ const TasksPage: React.FC = () => {
                     size="large"
                     color="primary" // Customize color (e.g., "secondary", "success")
                     aria-label="add" // Accessibility label
-                    onClick={handleClick}
+                    onClick={() => handleClick('add')}
                     sx={{
                         position: 'fixed', // Keep it fixed relative to the viewport
                         bottom: 64,
@@ -537,10 +480,12 @@ const TasksPage: React.FC = () => {
 
                 </Fab>
 
-                {/* นำ Modal component มาใช้ */}
+                {/* Modal component */}
                 <TaskFormModal
                     isOpen={isModalOpen}
                     onClose={handleCloseModal}
+                    formMode={formMode}
+                    taskData={taskInmodal}
                 />
             </main>
         </div>

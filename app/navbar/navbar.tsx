@@ -1,7 +1,6 @@
 // navbar.tsx
 import React from "react";
 import Image from "next/image";
-import Logo from "../../public/logo.png";
 import { FaBars } from "react-icons/fa";
 import Link from "next/link";
 
