@@ -98,33 +98,36 @@ const TasksPage: React.FC = () => {
             );
         }
 
-        const handleStorageChange = () => {
-            const updated = localStorage.getItem('to-do-list-tasks');
-            if (updated) setTasksData(JSON.parse(updated));
-        };
-
-        // Attach the event listener to the global window object
-        window.addEventListener("storage", handleStorageChange);
-
-        return () => {
-            // Clean up the listener when the component unmounts
-            window.removeEventListener("storage", handleStorageChange);
-        };
-
-
-
         // localStorage.setItem('to-do-list-tasks',JSON.stringify(tasksmock));
-    }, [tasks]);
+    }, []);
 
-    const handleTaskSaved = (task: Task) => {
+    const handleTaskSaved = (task: Task, mode: string) => {
         //   //localStorage.setItem('to-do-list-tasks', JSON.stringify(newTask));
-        const store = localStorage.getItem('to-do-list-tasks');
-        const oldTasks = store ? JSON.parse(store) : [];
 
-        const update = [...oldTasks, task];
+        if (mode === 'add') {
 
-        localStorage.setItem('to-do-list-tasks', JSON.stringify(update));
-        setTasksData(update);
+            const store = localStorage.getItem('to-do-list-tasks');
+            const oldTasks = store ? JSON.parse(store) : [];
+
+            const update = [...oldTasks, task];
+
+            localStorage.setItem('to-do-list-tasks', JSON.stringify(update));
+            setTasksData(update);
+
+        } else {
+
+            const newTasksList = tasks.map(targetTask => {
+                return targetTask.id === task.id ? task : targetTask;
+            });
+
+            localStorage.setItem('to-do-list-tasks', JSON.stringify(newTasksList));
+
+            
+
+            setTasksData(newTasksList);
+
+        }
+
     }
 
     //Calendar date management
@@ -218,7 +221,7 @@ const TasksPage: React.FC = () => {
     };
 
     //Task in modal handle
-    const [taskInmodal, setTaskInmodal] = useState<Task | undefined>(undefined);
+    const [taskInmodal, setTaskInmodal] = useState<Task>();
 
     // Modal form mode
     const [formMode, setFormMode] = useState<'view' | 'add' | 'edit' | 'close'>('close')

@@ -3,6 +3,7 @@
 
 import {
   Button,
+  Checkbox,
   Datepicker,
   Label,
   Modal,
@@ -28,8 +29,8 @@ interface TaskFormModalProps {
   isOpen: boolean; // สถานะเปิด/ปิด ที่มาจาก Parent
   onClose: () => void; // ฟังก์ชันปิด Modal ที่มาจาก Parent
   formMode: "view" | "add" | "edit" | "close";
-  taskData?: Task;
-  onSaveSuccess:(formtask:Task) => void;
+  taskData: Task;
+  onSaveSuccess: (formtask: Task, mode: string) => void;
 }
 
 export const TaskFormModal: React.FC<TaskFormModalProps> = ({
@@ -49,8 +50,9 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
   // State for form fields (used in add/edit)
   const [taskTitle, setTaskTitle] = useState("");
   const [taskDetails, setTaskDetails] = useState("");
+  const [completestatus, setComplete] = useState<boolean>(false);
 
-  const [modaltask, setModaltask] = useState<Task>();
+  //const [modaltask, setModaltask] = useState<Task>();
 
   // Update fields when modal opens or taskData/formMode changes
   useEffect(() => {
@@ -78,23 +80,42 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Task Submitted:", { title: taskTitle, details: taskDetails });
+    console.log("Task Submitted:", { title: taskTitle, details: taskDetails ,completestatus:completestatus });
     // TODO: save logic here
 
-    const newTask: Task = {
-      id: Date.now(),
-      name: taskTitle,
-      description: taskDetails,
+    if (formMode === 'add') {
 
-      price: "0.00",
-      image: "default-image-url.jpg",
+      const newTask: Task = {
+        id: Date.now(),
+        name: taskTitle,
+        description: taskDetails,
 
-      completed: false,
-      datetime: selectedDate ? selectedDate.toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB'),
-    };
-    
-    //Sent new task back to parent
-    onSaveSuccess(newTask);
+        price: "0.00",
+        image: "default-image-url.jpg",
+
+        completed: false,
+        datetime: selectedDate ? selectedDate.toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB'),
+      };
+
+      //Sent new task back to parent
+      onSaveSuccess(newTask, formMode);
+    } else {
+
+      const editTask: Task = {
+        id: taskData.id,
+        name: taskTitle,
+        description: taskDetails,
+
+        price: "0.00",
+        image: "default-image-url.jpg",
+
+        completed: completestatus,
+        datetime: selectedDate ? selectedDate.toLocaleDateString('en-GB') : taskData.datetime,
+      };
+
+      onSaveSuccess(editTask, formMode);
+    }
+
 
     handleClose();
   };
@@ -173,11 +194,24 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
             </div>
 
             {/* Buttons */}
-            <div className="w-full flex justify-end gap-3">
-              <Button color="gray" onClick={handleClose}>
-                Cancel
-              </Button>
-              <Button type="submit">Save</Button>
+            <div className="w-full flex justify-between gap-3">
+              <div className="flex items-center gap-1">
+
+
+                <Checkbox defaultChecked={taskData?.completed} onChange={(e) => setComplete(e.target.checked)}>
+
+                </Checkbox>
+
+                : Status
+              </div>
+              <div className="flex flex-row gap-3">
+
+
+                <Button color="gray" onClick={handleClose}>
+                  Cancel
+                </Button>
+                <Button type="submit">Save</Button>
+              </div>
             </div>
           </form>
         )}
