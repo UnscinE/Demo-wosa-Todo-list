@@ -88,11 +88,44 @@ const TasksPage: React.FC = () => {
     useEffect(() => {
         const storeTasks = localStorage.getItem('to-do-list-tasks');
 
-        if (!storeTasks) {
-            setTasksData(tasksmock);
+        if (storeTasks) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setTasksData(
+                //tasksmock
+                // .concat(
+                JSON.parse(storeTasks)
+                //)
+            );
         }
-    }, []);
 
+        const handleStorageChange = () => {
+            const updated = localStorage.getItem('to-do-list-tasks');
+            if (updated) setTasksData(JSON.parse(updated));
+        };
+
+        // Attach the event listener to the global window object
+        window.addEventListener("storage", handleStorageChange);
+
+        return () => {
+            // Clean up the listener when the component unmounts
+            window.removeEventListener("storage", handleStorageChange);
+        };
+
+
+
+        // localStorage.setItem('to-do-list-tasks',JSON.stringify(tasksmock));
+    }, [tasks]);
+
+    const handleTaskSaved = (task: Task) => {
+        //   //localStorage.setItem('to-do-list-tasks', JSON.stringify(newTask));
+        const store = localStorage.getItem('to-do-list-tasks');
+        const oldTasks = store ? JSON.parse(store) : [];
+
+        const update = [...oldTasks, task];
+
+        localStorage.setItem('to-do-list-tasks', JSON.stringify(update));
+        setTasksData(update);
+    }
 
     //Calendar date management
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -192,22 +225,20 @@ const TasksPage: React.FC = () => {
 
     // ฟังก์ชันที่ถูกเรียกเมื่อปุ่ม FAB ถูกคลิก
     const handleClick = (mode: 'view' | 'add' | 'edit' | 'close', taskToView_Edit_Delete?: Task) => {
-        
+
         setTaskInmodal(taskToView_Edit_Delete)
-        
+
         setIsModalOpen(true)
         if (mode === 'add') {
             setFormMode(mode)
 
         } else if (mode === 'view') {
             setFormMode(mode)
-        }if (mode === 'edit') {
+        } if (mode === 'edit') {
             setFormMode(mode)
         }
 
     };
-
-
 
     // Custom theme for cards
     const customTheme = createTheme({
@@ -486,6 +517,7 @@ const TasksPage: React.FC = () => {
                     onClose={handleCloseModal}
                     formMode={formMode}
                     taskData={taskInmodal}
+                    onSaveSuccess={handleTaskSaved}
                 />
             </main>
         </div>

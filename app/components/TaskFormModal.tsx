@@ -11,7 +11,7 @@ import {
   TextInput,
   Textarea,
 } from "flowbite-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 
 // Task type define
 type Task = {
@@ -29,6 +29,7 @@ interface TaskFormModalProps {
   onClose: () => void; // ฟังก์ชันปิด Modal ที่มาจาก Parent
   formMode: "view" | "add" | "edit" | "close";
   taskData?: Task;
+  onSaveSuccess:(formtask:Task) => void;
 }
 
 export const TaskFormModal: React.FC<TaskFormModalProps> = ({
@@ -36,23 +37,35 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
   onClose,
   formMode,
   taskData,
+  onSaveSuccess,
 }) => {
-  if (!isOpen) return null;
+  //Calendar date management
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  const onSelectedDateChanged = (date: Date | null) => {
+    setSelectedDate(date);
+  }
 
   // State for form fields (used in add/edit)
   const [taskTitle, setTaskTitle] = useState("");
   const [taskDetails, setTaskDetails] = useState("");
 
-  // Pre-fill fields when editing
+  const [modaltask, setModaltask] = useState<Task>();
+
+  // Update fields when modal opens or taskData/formMode changes
   useEffect(() => {
-    if (formMode === "edit" && taskData) {
-      setTaskTitle(taskData.name);
-      setTaskDetails(taskData.description);
-    } else {
-      setTaskTitle("");
-      setTaskDetails("");
+    if (isOpen) {
+      if (formMode === "edit" && taskData) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setTaskTitle(taskData.name ?? "");
+        setTaskDetails(taskData.description ?? "");
+      } else {
+        setTaskTitle("");
+        setTaskDetails("");
+      }
     }
-  }, [formMode, taskData]);
+    // Only run when modal opens or relevant props change
+  }, [isOpen, formMode, taskData]);
 
   // Close handler
   function handleClose() {
@@ -64,10 +77,24 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
   // Submit handler
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
     console.log("Task Submitted:", { title: taskTitle, details: taskDetails });
     // TODO: save logic here
 
+    const newTask: Task = {
+      id: Date.now(),
+      name: taskTitle,
+      description: taskDetails,
+
+      price: "0.00",
+      image: "default-image-url.jpg",
+
+      completed: false,
+      datetime: selectedDate ? selectedDate.toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB'),
+    };
     
+    //Sent new task back to parent
+    onSaveSuccess(newTask);
 
     handleClose();
   };
@@ -126,7 +153,10 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
             {/* Field 2: Date */}
             <div>
               <Label htmlFor="taskDate">Date 🗓️</Label>
-              <Datepicker id="taskDate" />
+              <Datepicker
+                id="taskDate"
+                onChange={onSelectedDateChanged} // May need specific prop based on your library
+              />
             </div>
 
             {/* Field 3: Description */}
