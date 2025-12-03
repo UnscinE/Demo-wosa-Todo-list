@@ -76,9 +76,9 @@ const TasksPage: React.FC = () => {
     type Task = {
         id: number;
         name: string;
-        image: string;
+        //image: string;
         description: string;
-        price: string;
+        //price: string;
         completed: boolean;
         datetime: string;
     };
@@ -96,11 +96,17 @@ const TasksPage: React.FC = () => {
                 JSON.parse(storeTasks)
                 //)
             );
+            //localStorage.setItem("to-do-list-tasks", JSON.stringify(storeTasks));
         }
 
         // localStorage.setItem('to-do-list-tasks',JSON.stringify(tasksmock));
     }, []);
 
+    // useEffect(() => {
+    //     localStorage.setItem('to-do-list-tasks',JSON.stringify(tasks));
+    // }, [tasks]);
+
+    //Callback function from child
     const handleTaskSaved = (task: Task, mode: string) => {
         //   //localStorage.setItem('to-do-list-tasks', JSON.stringify(newTask));
 
@@ -114,19 +120,28 @@ const TasksPage: React.FC = () => {
             localStorage.setItem('to-do-list-tasks', JSON.stringify(update));
             setTasksData(update);
 
-        } else {
+        } else if (mode === 'edit') {
 
             const newTasksList = tasks.map(targetTask => {
                 return targetTask.id === task.id ? task : targetTask;
             });
 
             localStorage.setItem('to-do-list-tasks', JSON.stringify(newTasksList));
-
-            
-
             setTasksData(newTasksList);
 
+        } else if (mode === 'delete') {
+
+            const taskNotDelete = tasks.filter((taskToDelete) => taskToDelete.id !== task.id)
+            localStorage.setItem('to-do-list-tasks', JSON.stringify(taskNotDelete));
+            setTasksData(taskNotDelete);
+
         }
+
+    }
+
+    //Update by checkbox
+    const updateBycheckbox(tasks:Task){
+
 
     }
 
@@ -224,20 +239,22 @@ const TasksPage: React.FC = () => {
     const [taskInmodal, setTaskInmodal] = useState<Task>();
 
     // Modal form mode
-    const [formMode, setFormMode] = useState<'view' | 'add' | 'edit' | 'close'>('close')
+    const [formMode, setFormMode] = useState<'view' | 'add' | 'edit' | 'close' | 'delete'>('close')
 
     // ฟังก์ชันที่ถูกเรียกเมื่อปุ่ม FAB ถูกคลิก
-    const handleClick = (mode: 'view' | 'add' | 'edit' | 'close', taskToView_Edit_Delete?: Task) => {
+    const handleClick = (mode: 'view' | 'add' | 'edit' | 'delete', taskToView_Edit_Delete?: Task) => {
 
         setTaskInmodal(taskToView_Edit_Delete)
 
         setIsModalOpen(true)
         if (mode === 'add') {
             setFormMode(mode)
-
         } else if (mode === 'view') {
             setFormMode(mode)
-        } if (mode === 'edit') {
+        } else if (mode === 'edit') {
+            setFormMode(mode)
+        } else if (mode === 'delete') {
+            //setIsModalOpen(false)
             setFormMode(mode)
         }
 
@@ -361,7 +378,28 @@ const TasksPage: React.FC = () => {
                                                             </div>
                                                             <div className="flex flex-col items-center text-base font-semibold text-heading">
                                                                 {task.datetime}
-                                                                <Checkbox color="default" className="mt-2" defaultChecked={task.completed} />
+                                                                <div>
+                                                                    ⏳ <Checkbox
+                                                                        color="default"
+                                                                        className=""
+                                                                        checked={task.completed}
+                                                                        onChange={(e) => {
+                                                                            const checked = e.target.checked;
+
+                                                                            setTasksData(prev =>
+                                                                                prev.map((t) =>
+                                                                                    t.id === task.id ? { ...t, completed: checked } : t
+                                                                                )
+                                                                            );
+                                                                            console.log("dsfsfsfsdfsfsfsf")
+                                                                            localStorage.setItem('to-do-list-tasks', JSON.stringify(tasks));
+
+
+
+
+                                                                        },}
+                                                                    />
+                                                                </div>
                                                             </div>
 
 
@@ -450,7 +488,7 @@ const TasksPage: React.FC = () => {
                                                         <div className="justify-between flex flex-row">
 
 
-                                                            <h5 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
+                                                            <h5 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white truncate ">
                                                                 {task.name}
                                                             </h5>
                                                             <p className="text-lg font-lg text-gray-500 dark:text-gray-400">
@@ -472,7 +510,7 @@ const TasksPage: React.FC = () => {
                                                                 <button type="button" onClick={() => handleClick("edit", task)} className="text-white bg-[#7ba3fa] hover:bg-[#7ba3fa]/90 focus:ring-4 focus:outline-none focus:ring-[#7ba3fa]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#7ba3fa]/55 rounded-xl">
                                                                     ✏️ Edit
                                                                 </button>
-                                                                <button type="button" className="text-white hover:text-black bg-[#d8d8d8] hover:bg-[#bfbfbf]/90 focus:ring-4 focus:outline-none focus:ring-[#bfbfbf]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#7ba3fa]/55 rounded-xl">
+                                                                <button type="button" onClick={() => handleClick("delete", task)} className="text-white hover:text-black bg-[#d8d8d8] hover:bg-[#bfbfbf]/90 focus:ring-4 focus:outline-none focus:ring-[#bfbfbf]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#7ba3fa]/55 rounded-xl">
                                                                     🗑️ Delete
                                                                 </button>
                                                             </div>
@@ -481,7 +519,12 @@ const TasksPage: React.FC = () => {
                                                             </span> */}
 
                                                             <div className="me-2">
-                                                                <Checkbox color="default" defaultChecked={task.completed} />
+                                                                ⏳ <Checkbox
+                                                                    color="default"
+                                                                    className=""
+                                                                    checked={task.completed}
+                                                                    onChange={upDatestatus}
+                                                                />
                                                             </div>
 
                                                         </div>

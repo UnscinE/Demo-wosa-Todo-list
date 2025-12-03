@@ -10,7 +10,7 @@ const Home: React.FC = () => {
   return (
 
     <div className="flex flex-col max-w-full items-center justify-center min-h-screen bg-white">
-      
+
       {/* ใช้ Navbar component */}
       <Navbar />
 
@@ -19,8 +19,8 @@ const Home: React.FC = () => {
         {/* Header */}
         <header className="w-full max-w-5xl py-6 flex justify-center items-center">
           <h1 className="text-2xl font-bold">TodoList</h1>
-          
-          
+
+
         </header>
 
 
@@ -30,12 +30,19 @@ const Home: React.FC = () => {
           <p className="text-gray-600 mb-8 text-lg">
             A simple To-Do app to help you stay organized and productive every day.
           </p>
+          <div className="flex gap-3 flex-col items-center-safe">
+            <Link href="/todos"> {/* Replace with your actual todo page path */}
+              <button className="px-7 py-3 bg-blue-600 text-white rounded-xl text-lg hover:bg-blue-700 transition">
+                Start Now
+              </button>
+            </Link>
 
-          <Link href="/todos"> {/* Replace with your actual todo page path */}
-            <button className="px-7 py-3 bg-blue-600 text-white rounded-xl text-lg hover:bg-blue-700 transition">
-              Start Now
-            </button>
-          </Link>
+            <Link href="/login"> {/* Replace with your actual todo page path */}
+              <button className="px-7 py-3 bg-blue-600 text-white rounded-xl text-lg hover:bg-blue-700 transition">
+                Login
+              </button>
+            </Link>
+          </div>
         </section>
 
         {/* Image Section */}
