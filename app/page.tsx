@@ -6,7 +6,6 @@ import Link from "next/link";
 
 
 const Home: React.FC = () => {
-  //const [count, setCount] = useState(0);
   return (
 
     <div className="flex flex-col max-w-full items-center justify-center min-h-screen bg-white">

@@ -76,40 +76,29 @@ const TasksPage: React.FC = () => {
     type Task = {
         id: number;
         name: string;
-        //image: string;
         description: string;
-        //price: string;
         completed: boolean;
         datetime: string;
     };
 
-    const [tasks, setTasksData] = useState<Task[]>([]);
+    const [tasks, setTasksData] = useState<Task[]>(() => {
+        if (typeof window !== 'undefined') {
+            const store = localStorage.getItem("to-do-list-tasks");
+            if (store) {
+                return JSON.parse(store) as Task[];
+            }
+        }
+        return [];
+    });
 
     useEffect(() => {
-        const storeTasks = localStorage.getItem('to-do-list-tasks');
-
-        if (storeTasks) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setTasksData(
-                //tasksmock
-                // .concat(
-                JSON.parse(storeTasks)
-                //)
-            );
-            //localStorage.setItem("to-do-list-tasks", JSON.stringify(storeTasks));
+        if (tasks) {
+            localStorage.setItem("to-do-list-tasks", JSON.stringify(tasks));
         }
-
-        // localStorage.setItem('to-do-list-tasks',JSON.stringify(tasksmock));
-    }, []);
-
-    // useEffect(() => {
-    //     localStorage.setItem('to-do-list-tasks',JSON.stringify(tasks));
-    // }, [tasks]);
+    }, [tasks]);
 
     //Callback function from child
     const handleTaskSaved = (task: Task, mode: string) => {
-        //   //localStorage.setItem('to-do-list-tasks', JSON.stringify(newTask));
-
         if (mode === 'add') {
 
             const store = localStorage.getItem('to-do-list-tasks');
@@ -136,14 +125,22 @@ const TasksPage: React.FC = () => {
             setTasksData(taskNotDelete);
 
         }
-
     }
 
     //Update by checkbox
-    const updateBycheckbox(tasks:Task){
+    const updateBycheckbox = (updateTargetnew: Task) =>
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            const checked = e.target.checked;
 
+            const news = tasks.map((updateTargetold) =>
+                updateTargetold.id === updateTargetnew.id
+                    ? { ...updateTargetold, completed: checked }
+                    : updateTargetold
+            );
 
-    }
+            setTasksData(news);
+            localStorage.setItem('to-do-list-tasks', JSON.stringify(news));
+        };
 
     //Calendar date management
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -211,8 +208,6 @@ const TasksPage: React.FC = () => {
         return dateA.getTime() - dateB.getTime();
 
     });
-
-    console.log("Upcomming Tasks:", upcommingTasks);
 
     // View mode change function
     const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards');
@@ -305,7 +300,6 @@ const TasksPage: React.FC = () => {
     });
 
     return (
-
         <div className="flex flex-col max-w-full items-center justify-center min-h-screen bg-white">
             {/* ใช้ Navbar component */}
             <Navbar />
@@ -315,23 +309,11 @@ const TasksPage: React.FC = () => {
 
                     {/* div หลักที่ใช้ขนาด 20% */}
                     <div className="w-1/5 flex flex-col">
+
                         {/* ส่วนของปฎิทิน */}
-
                         <div className="h-4/10 flex flex-col bg-none justify-center border-gray-300">
-
-
                             <div className="flex flex-col place-items-center pb-4 pt-2 max-h-screen overflow-y-hidden overflow-x-hidden">
                                 <Datepicker inline onChange={handleDateChange} />
-                                {/* <p className="mt-6 text-lg font-medium">
-                                **Selected Date:** {selectedDate
-                                    ? selectedDate.toLocaleDateString('en-GB', {
-                                        weekday: 'long',
-                                        year: 'numeric',
-                                        month: 'numeric',
-                                        day: 'numeric'
-                                    })
-                                    : 'Please select a date.'}
-                            </p> */}
                             </div>
                         </div>
 
@@ -383,21 +365,7 @@ const TasksPage: React.FC = () => {
                                                                         color="default"
                                                                         className=""
                                                                         checked={task.completed}
-                                                                        onChange={(e) => {
-                                                                            const checked = e.target.checked;
-
-                                                                            setTasksData(prev =>
-                                                                                prev.map((t) =>
-                                                                                    t.id === task.id ? { ...t, completed: checked } : t
-                                                                                )
-                                                                            );
-                                                                            console.log("dsfsfsfsdfsfsfsf")
-                                                                            localStorage.setItem('to-do-list-tasks', JSON.stringify(tasks));
-
-
-
-
-                                                                        },}
+                                                                        onChange={updateBycheckbox(task)}
                                                                     />
                                                                 </div>
                                                             </div>
@@ -411,14 +379,7 @@ const TasksPage: React.FC = () => {
                                         </AnimatePresence>
                                     </ThemeProvider>
                                 </div>
-
                             </div>
-
-                            {/* Bottom field of Upcomming task */}
-                            {/* <div className="bg-amber-300 w-full h-1/12">
-
-                            </div> */}
-
                         </div>
 
                     </div>
@@ -458,7 +419,6 @@ const TasksPage: React.FC = () => {
                                 </button>
 
                             </div>
-
 
                         </div>
 
@@ -514,16 +474,13 @@ const TasksPage: React.FC = () => {
                                                                     🗑️ Delete
                                                                 </button>
                                                             </div>
-                                                            {/* <span className="text-3xl font-bold text-gray-900 dark:text-white">
-                                                                {task.price}
-                                                            </span> */}
 
                                                             <div className="me-2">
                                                                 ⏳ <Checkbox
                                                                     color="default"
                                                                     className=""
                                                                     checked={task.completed}
-                                                                    onChange={upDatestatus}
+                                                                    onChange={updateBycheckbox(task)}
                                                                 />
                                                             </div>
 
@@ -541,6 +498,7 @@ const TasksPage: React.FC = () => {
 
                     </div>
                 </div>
+
                 {/* FAB */}
                 <Fab
                     size="large"
@@ -548,7 +506,7 @@ const TasksPage: React.FC = () => {
                     aria-label="add" // Accessibility label
                     onClick={() => handleClick('add')}
                     sx={{
-                        position: 'fixed', // Keep it fixed relative to the viewport
+                        position: 'fixed', // Keep it fixed relative to the viewportw
                         bottom: 64,
                         right: 64,
                     }}
