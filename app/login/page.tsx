@@ -7,18 +7,26 @@ import Link from "next/link";
 export default function LoginForm() {
   const router = useRouter();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [error, setError] = useState("");
+  console.log(email);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const correctEmail = "test_todo@test.com";
     const correctPassword = "123456789";
 
+    const formData = new FormData(e.currentTarget);
+//setEmail(formData.get("email"));
+//setPassword(formData.get("password"));
+   const email = formData.get("email");
+   const password = formData.get("password");
+   console.log(email,password);
+
     if (email === correctEmail && password === correctPassword) {
-      console.log("Login success");
+
       router.push("/todos");
     } else {
       setError("Username หรือ Password ไม่ถูกต้อง");
@@ -45,8 +53,9 @@ export default function LoginForm() {
               type="email"
               className="w-full border rounded-lg px-3 py-2"
               placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              //value={email}
+              name="email"
+            //onChange={(e) => setEmail(e.target.value)}
             />
           </div>
 
@@ -57,8 +66,8 @@ export default function LoginForm() {
               type="password"
               className="w-full border rounded-lg px-3 py-2"
               placeholder="Enter your password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              //value={password}
+              name="password"
             />
           </div>
 
@@ -86,11 +95,15 @@ export default function LoginForm() {
 
         </form>
 
-        <div className="text-center mt-4">
+        <div className="flex flex-row items-center mt-4 gap-4 justify-center">
           <Link href="/" className="text-gray-600 hover:underline text-sm">
             Home Page
           </Link>
+          <Link href="/users" className="text-gray-300 hover:underline text-sm">
+            User List
+          </Link>
         </div>
+
 
       </div>
     </div>
