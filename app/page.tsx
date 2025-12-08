@@ -36,11 +36,20 @@ const Home: React.FC = () => {
               </button>
             </Link>
 
+<div className="items-center justify-center gap-5 flex flex-row w-full ">
             <Link href="/login"> {/* Replace with your actual todo page path */}
               <button className="px-7 py-3 bg-blue-600 text-white rounded-xl text-lg hover:bg-blue-700 transition">
                 Login
               </button>
             </Link>
+
+            <Link href="/users">
+              <button className="px-7 py-3 bg-blue-600 text-white rounded-xl text-lg hover:bg-blue-700 transition">
+                User
+              </button>
+            </Link>
+
+            </div>
           </div>
         </section>
 

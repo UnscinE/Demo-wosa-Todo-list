@@ -12,8 +12,8 @@ import {
   TextInput,
   Textarea,
 } from "flowbite-react";
-import { form } from "framer-motion/client";
-import React, { useState, useEffect, use } from "react";
+
+import React, { useState, useEffect } from "react";
 
 // Task type define
 type Task = {
@@ -113,8 +113,8 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
         name: taskTitle,
         description: taskDetails,
 
-       // price: "0.00",
-//image: "default-image-url.jpg",
+        // price: "0.00",
+        //image: "default-image-url.jpg",
 
         completed: false,
         datetime: selectedDate ? selectedDate.toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB'),
@@ -129,8 +129,8 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
         name: taskTitle,
         description: taskDetails,
 
-       // price: "0.00",
-       // image: "default-image-url.jpg",
+        // price: "0.00",
+        // image: "default-image-url.jpg",
 
         completed: completestatus,
         datetime: selectedDate ? selectedDate.toLocaleDateString('en-GB') : taskData.datetime,
@@ -201,7 +201,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
 
                   <div className="flex flex-row gap-3">
 
-                    
+
                     <Button color="red" type="submit">Confirm</Button>
                     <Button color="gray" onClick={handleClose}>Cancel</Button>
                   </div>
@@ -256,7 +256,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
                   <div className="flex items-center gap-1">
 
 
-                    <Checkbox color="default"  defaultChecked={taskData?.completed} onChange={(e) => setComplete(e.target.checked)}>
+                    <Checkbox color="default" defaultChecked={taskData?.completed} onChange={(e) => setComplete(e.target.checked)}>
 
                     </Checkbox>
                     : Status

@@ -3,6 +3,13 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
 import Navbar from "../navbar/navbar";
+import UpcommingTasksList from "../components/UpcomingTaskList";
+import TaskList from "../components/Tasklist";
+import { customTheme, customTheme1 } from "../components/theme/cardTheme";
+import { Task } from '../components/datatype/Task';
+
+
+
 import Fab from '@mui/material/Fab';
 
 
@@ -13,73 +20,6 @@ import { TaskFormModal } from "../components/TaskFormModal";
 import { AnimatePresence, motion } from "framer-motion";
 
 const TasksPage: React.FC = () => {
-
-    //Sample tasks data
-    // Card list sample data
-    const tasksmock = [
-        {
-            id: 1,
-            name: 'Product A',
-            image: 'https://flowbite.com/docs/images/products/apple-watch.png', // Replace with your image URL
-            description: 'A brief description of Product A.sdawadsadwsd dddddddddddd dddddsadasdw qeqeqwesadqweqdd ddddddddd fkefkekfkk kkkkefkkfek kkerkwrewkrdflsd kksdfksfkekwkwekr kwkerkwerkwekrk wkerkwerkkwdflsdk;f wepw[er kq eporwk pweorkpwekrpo [qer poqkewrkpqwerokwer w[qerk weropwqerkwpr[ kqwrkowoqkqp werwer',
-            price: '$199',
-            completed: false,
-            datetime: "19/12/2025"
-        },
-        {
-            id: 2,
-            name: 'Product B',
-            image: 'https://flowbite.com/docs/images/products/imac.png', // Replace with your image URL
-            description: 'A brief description of Product B.',
-            price: '$1299',
-            completed: true,
-            datetime: "20/12/2025"
-        },
-        {
-            id: 3,
-            name: 'Product C',
-            image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
-            description: 'A brief description of Product C.',
-            price: '$799',
-            completed: false,
-            datetime: "21/12/2025"
-        }, {
-            id: 4,
-            name: 'Product C',
-            image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
-            description: 'A brief description of Product C.',
-            price: '$799',
-            completed: false,
-            datetime: "24/12/2025"
-        }, {
-            id: 5,
-            name: 'Product C',
-            image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
-            description: 'A brief description of Product C.',
-            price: '$799',
-            completed: false,
-            datetime: "24/12/2025"
-        }, {
-            id: 6,
-            name: 'Product C',
-            image: 'https://flowbite.com/docs/images/products/iphone-12.png', // Replace with your image URL
-            description: 'A brief description of Product C.',
-            price: '$799',
-            completed: false,
-            datetime: "24/12/2025"
-        },
-    ];
-
-    //Data preparation using useState local storage
-
-    // Task type definition
-    type Task = {
-        id: number;
-        name: string;
-        description: string;
-        completed: boolean;
-        datetime: string;
-    };
 
     const [tasks, setTasksData] = useState<Task[]>(() => {
         if (typeof window !== 'undefined') {
@@ -255,50 +195,6 @@ const TasksPage: React.FC = () => {
 
     };
 
-    // Custom theme for cards
-    const customTheme = createTheme({
-        card: {
-            "root": {
-                "base": "flex rounded-lg border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800",
-                "children": "flex h-full flex-col justify-start gap-4 p-4",
-                "horizontal": {
-                    "off": "flex-col",
-                    "on": "flex-col md:max-w-xl md:flex-row"
-                },
-                "href": "hover:bg-gray-100 dark:hover:bg-gray-700"
-            },
-            "img": {
-                "base": "",
-                "horizontal": {
-                    "off": "rounded-t-lg",
-                    "on": "h-96 w-full rounded-t-lg object-cover md:h-auto md:w-48 md:rounded-none md:rounded-l-lg"
-                }
-            }
-        }
-    });
-
-    // Custom theme for upcomming task cards
-    const customTheme1 = createTheme({
-        card: {
-            "root": {
-                "base": "flex rounded-lg border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800",
-                "children": "flex h-full flex-col justify-start gap-4 p-2",
-                "horizontal": {
-                    "off": "flex-col",
-                    "on": "flex-col md:max-w-xl md:flex-row"
-                },
-                "href": "hover:bg-gray-100 dark:hover:bg-gray-700"
-            },
-            "img": {
-                "base": "",
-                "horizontal": {
-                    "off": "rounded-t-lg",
-                    "on": "h-96 w-full rounded-t-lg object-cover md:h-auto md:w-48 md:rounded-none md:rounded-l-lg"
-                }
-            }
-        }
-    });
-
     return (
         <div className="flex flex-col max-w-full items-center justify-center min-h-screen bg-white">
             {/* ใช้ Navbar component */}
@@ -329,60 +225,18 @@ const TasksPage: React.FC = () => {
                             {/* Middle field of Upcomming task */}
                             <div className=" w-full h-10/12 p-4 overflow-y-auto scrollbar-hide">
 
+                                {/* Upcoming task list component */}
+                                <UpcommingTasksList
+                                    upcommingTasks={upcommingTasks}
+                                    customTheme1={customTheme1}
+                                    updateBycheckbox={updateBycheckbox}
+                                />
 
-                                {/* Upcoming task list */}
-                                <div className="flex flex-col gap-4 items-stretch">
-                                    <ThemeProvider theme={customTheme1}>
-                                        <AnimatePresence mode="popLayout">
-                                            {upcommingTasks.slice(0, 5).map((task, index) => (
-
-                                                <motion.div
-                                                    key={task.id}
-                                                    layout
-                                                    initial={{ opacity: 0, y: 30 }}
-                                                    animate={{ opacity: 1, y: 0 }}
-                                                    exit={{ opacity: 0, y: -20 }}
-                                                    transition={{
-                                                        duration: 0.5,
-                                                        delay: index * 0.1,
-                                                    }}
-                                                >
-                                                    <Card key={index} className="p-4 hover:scale-[1.025] transition-all duration-300">
-                                                        <div className="flex items-center space-x-4 rtl:space-x-reverse">
-
-                                                            <div className="flex-1 min-w-0">
-                                                                <p className="text-sm font-medium text-heading truncate">
-                                                                    {task.name}
-                                                                </p>
-                                                                <p className="text-sm text-body truncate">
-                                                                    {task.description}
-                                                                </p>
-                                                            </div>
-                                                            <div className="flex flex-col items-center text-base font-semibold text-heading">
-                                                                {task.datetime}
-                                                                <div>
-                                                                    ⏳ <Checkbox
-                                                                        color="default"
-                                                                        className=""
-                                                                        checked={task.completed}
-                                                                        onChange={updateBycheckbox(task)}
-                                                                    />
-                                                                </div>
-                                                            </div>
-
-
-                                                        </div>
-                                                    </Card>
-                                                </motion.div>
-
-                                            ))}
-                                        </AnimatePresence>
-                                    </ThemeProvider>
-                                </div>
                             </div>
                         </div>
 
                     </div>
+
                     {/* div หลักที่ใช้ขนาด 80% */}
                     <div className="w-4/5  flex flex-col">
 
@@ -422,79 +276,16 @@ const TasksPage: React.FC = () => {
 
                         </div>
 
-                        {/* Task List */}
-                        <div className="h-11/12 p-4 scrollbar-hide overflow-y-auto">
-
-                            <div className={`${getViewClass()} items-stretch`}>
-                                <ThemeProvider theme={customTheme}>
-                                    <AnimatePresence mode="popLayout">
-                                        {filteredTasks.map((task, index) => (
-
-                                            <motion.div
-                                                key={task.id + filterMode + viewMode} // เพิ่ม filterMode และ viewMode เป็นส่วนหนึ่งของ key เพื่อบังคับให้ React รีเรนเดอร์เมื่อเปลี่ยนโหมด
-                                                layout
-                                                initial={{ opacity: 0, y: 30 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                exit={{ opacity: 0, y: -20 }}
-                                                transition={{
-                                                    duration: 0.5,
-                                                    delay: index * 0.1,   // ให้ card ลอยขึ้นทีละใบ
-
-                                                }}
-                                            >
-                                                <Card className="hover:scale-[1.025] transition-all duration-300 h-full flex flex-col">
-                                                    <div className="flex flex-col h-3/4">
-
-                                                        <div className="justify-between flex flex-row">
-
-
-                                                            <h5 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white truncate ">
-                                                                {task.name}
-                                                            </h5>
-                                                            <p className="text-lg font-lg text-gray-500 dark:text-gray-400">
-                                                                {task.datetime} 📌
-                                                            </p>
-                                                        </div>
-
-                                                        <p className="text-base font-normal text-gray-700 dark:text-gray-400 line-clamp-4 min-h-24">
-                                                            {task.description}
-                                                        </p>
-                                                    </div>
-
-                                                    <div className="mt-auto">
-                                                        <div className="flex items-center justify-between">
-                                                            <div className="flex-row flex-wrap gap-2 inline-flex">
-                                                                <button type="button" onClick={() => handleClick("view", task)} className="text-white bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 rounded-xl">
-                                                                    📋 View
-                                                                </button>
-                                                                <button type="button" onClick={() => handleClick("edit", task)} className="text-white bg-[#7ba3fa] hover:bg-[#7ba3fa]/90 focus:ring-4 focus:outline-none focus:ring-[#7ba3fa]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#7ba3fa]/55 rounded-xl">
-                                                                    ✏️ Edit
-                                                                </button>
-                                                                <button type="button" onClick={() => handleClick("delete", task)} className="text-white hover:text-black bg-[#d8d8d8] hover:bg-[#bfbfbf]/90 focus:ring-4 focus:outline-none focus:ring-[#bfbfbf]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#7ba3fa]/55 rounded-xl">
-                                                                    🗑️ Delete
-                                                                </button>
-                                                            </div>
-
-                                                            <div className="me-2">
-                                                                ⏳ <Checkbox
-                                                                    color="default"
-                                                                    className=""
-                                                                    checked={task.completed}
-                                                                    onChange={updateBycheckbox(task)}
-                                                                />
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-                                                </Card>
-                                            </motion.div>
-
-                                        ))}
-                                    </AnimatePresence>
-                                </ThemeProvider>
-                            </div>
-
-                        </div>
+                        {/* Task List component */}
+                        <TaskList
+                            getViewClass={getViewClass}
+                            customTheme={customTheme}
+                            filteredTasks={filteredTasks}
+                            filterMode={filterMode}
+                            viewMode={viewMode}
+                            handleClick={handleClick}
+                            updateBycheckbox={updateBycheckbox}
+                        />
 
                     </div>
                 </div>
