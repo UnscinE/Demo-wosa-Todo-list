@@ -1,41 +1,62 @@
 "use client";
 
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
+
 import Navbar from "../navbar/navbar";
 import UpcommingTasksList from "../components/UpcomingTaskList";
 import TaskList from "../components/Tasklist";
 import { customTheme, customTheme1 } from "../components/theme/cardTheme";
+import { TaskFormModal } from "../components/TaskFormModal";
 import { Task } from '../components/datatype/Task';
 
-
-
 import Fab from '@mui/material/Fab';
-
-
 import { PiCardsBold, PiListBulletsBold } from "react-icons/pi";
-import { Card, Checkbox, createTheme, Datepicker, ThemeProvider } from "flowbite-react";
+import { Datepicker } from "flowbite-react";
 import { IoAdd } from "react-icons/io5";
-import { TaskFormModal } from "../components/TaskFormModal";
-import { AnimatePresence, motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+
 
 const TasksPage: React.FC = () => {
 
+    const [limit, setlimit] = useState(5);
+
     const [tasks, setTasksData] = useState<Task[]>(() => {
-        if (typeof window !== 'undefined') {
-            const store = localStorage.getItem("to-do-list-tasks");
-            if (store) {
-                return JSON.parse(store) as Task[];
-            }
+        const store = localStorage.getItem("to-do-list-tasks");
+        if (store) {
+            return JSON.parse(store) as Task[];
         }
         return [];
     });
 
+    //Query function for useQuery
+    const fetchTasks = async (limit: number): Promise<Task[]> => {
+        const storeData = localStorage.getItem("to-do-list-tasks");
+
+        if (!storeData) return [];
+
+        const fullTasks: Task[] = JSON.parse(storeData);
+        return fullTasks.slice(0, limit);
+    };
+
+    const useTasks = (limit: number) => {
+        return useQuery({
+            queryKey: ["tasks", limit],
+            queryFn: () => fetchTasks(limit),
+            initialData: []
+        });
+    };
+
+    const { data: taskDataTSQ, isPending, isFetching, refetch } = useTasks(limit);
+
+    console.log("Task data from TSQ: ", taskDataTSQ);
     useEffect(() => {
         if (tasks) {
             localStorage.setItem("to-do-list-tasks", JSON.stringify(tasks));
         }
-    }, [tasks]);
+
+        refetch();
+
+    }, [refetch, tasks]);
 
     //Callback function from child
     const handleTaskSaved = (task: Task, mode: string) => {
@@ -99,7 +120,7 @@ const TasksPage: React.FC = () => {
     };
 
     //Filter tasks by selected date
-    const filteredByDateTasks = tasks.filter(task => {
+    const filteredByDateTasks = taskDataTSQ.filter(task => {
         // If no date selected, show all tasks
         if (!selectedDate) return true;
 
