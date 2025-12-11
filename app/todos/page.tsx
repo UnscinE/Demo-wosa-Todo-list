@@ -4,10 +4,12 @@ import React, { useEffect, useState } from "react";
 
 import Navbar from "../navbar/navbar";
 import UpcommingTasksList from "../components/UpcomingTaskList";
+import TSQTaskList from "../components/TaskTSQList";
 import TaskList from "../components/Tasklist";
 import { customTheme, customTheme1 } from "../components/theme/cardTheme";
 import { TaskFormModal } from "../components/TaskFormModal";
 import { Task } from '../components/datatype/Task';
+import TSQTask  from "../components/datatype/TSQTask";
 
 import Fab from '@mui/material/Fab';
 import { PiCardsBold, PiListBulletsBold } from "react-icons/pi";
@@ -308,6 +310,16 @@ const TasksPage: React.FC = () => {
                             updateBycheckbox={updateBycheckbox}
                         />
 
+                        {/* TSQ Task List component */}
+                        <TSQTaskList
+                            getViewClass={getViewClass}
+                            customTheme={customTheme}
+                            filteredTasks={filteredTasks}
+                            filterMode={filterMode}
+                            viewMode={viewMode}
+                            handleClick={handleClick}
+                            updateBycheckbox={updateBycheckbox}
+                        />
                     </div>
                 </div>
 
