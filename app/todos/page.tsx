@@ -16,6 +16,7 @@ import { PiCardsBold, PiListBulletsBold } from "react-icons/pi";
 import { Datepicker } from "flowbite-react";
 import { IoAdd } from "react-icons/io5";
 import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 
 const TasksPage: React.FC = () => {
@@ -31,13 +32,19 @@ const TasksPage: React.FC = () => {
     });
 
     //Query function for useQuery
-    const fetchTasks = async (limit: number): Promise<Task[]> => {
+    const fetchTasks = async (limit: number): Promise<TSQTask[]> => {
+        //old data src (load from local storage)
         const storeData = localStorage.getItem("to-do-list-tasks");
+        
+        //change to new data src (load from TSQ)
+        const response = await axios.get("https://dummyjson.com/todos");
+        console.log("Fetched data froms TSQ: ", response.data.todos);
+        //if (!storeData) return [];
 
-        if (!storeData) return [];
-
-        const fullTasks: Task[] = JSON.parse(storeData);
+        //return task from api using TSQ management
+        const fullTasks: TSQTask[] = response.data.todos;
         return fullTasks.slice(0, limit);
+        
     };
 
     const useTasks = (limit: number) => {
@@ -176,7 +183,7 @@ const TasksPage: React.FC = () => {
     const [viewMode, setViewMode] = useState<'cards' | 'list'>('cards');
     const getViewClass = () => {
         return viewMode === "cards"
-            ? "grid gird-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+            ? "grid gird-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
             : "flex flex-col gap-4";
     };
 
@@ -300,7 +307,7 @@ const TasksPage: React.FC = () => {
                         </div>
 
                         {/* Task List component */}
-                        <TaskList
+                        {/* <TaskList
                             getViewClass={getViewClass}
                             customTheme={customTheme}
                             filteredTasks={filteredTasks}
@@ -308,7 +315,7 @@ const TasksPage: React.FC = () => {
                             viewMode={viewMode}
                             handleClick={handleClick}
                             updateBycheckbox={updateBycheckbox}
-                        />
+                        /> */}
 
                         {/* TSQ Task List component */}
                         <TSQTaskList

@@ -40,28 +40,45 @@ export const TSQTaskList: React.FC<Props> = ({
                             }}
                         >
                             <Card className="hover:scale-[1.025] transition-all duration-300 h-full flex flex-col">
-                                <div className="flex flex-col">
+                                <div className="flex flex-row gap-2">
                                     <div className="w-3/4">
 
-                                        <div className="bg-amber-100 h-2/4">
-                                            <h5>
+                                        <div className="h-1/4">
+                                            <h5 className="font-extrabold text-3xl">
                                                 {task.id}
                                             </h5>
                                         </div>
-                                        <div className="bg-amber-200 h-1/4">
-                                            <p>{task.todo}</p>
+                                        <div className="p-2 h-2/4">
+                                            <p className="line-clamp-4 min-h-32 text-base font-normal text-gray-700">
+                                                {task.todo}
+                                            </p>
                                         </div>
-                                        <div className="bg-amber-500 h-1/4">
-                                            ⏳ : <Checkbox
+                                        <div className="h-1/4 flex items-center">
+                                            ⏳ :  <Checkbox
                                                 color="default"
-                                                className=""
+                                                className="ms-2"
                                                 checked={task.completed}
                                                 onChange={updateBycheckbox(task)}
                                             />
                                         </div>
                                     </div>
                                     <div className="w-1/4">
-                                    test
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex-row flex-wrap gap-2 inline-flex w-full">
+                                                <button type="button" onClick={() => handleClick("view", task)} className="text-white bg-[#3b5998] hover:bg-[#3b5998]/90 focus:ring-4 focus:outline-none focus:ring-[#3b5998]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#3b5998]/55 rounded-xl w-full">
+                                                    📋 View
+                                                </button>
+                                                <button type="button" onClick={() => handleClick("edit", task)} className="text-white bg-[#7ba3fa] hover:bg-[#7ba3fa]/90 focus:ring-4 focus:outline-none focus:ring-[#7ba3fa]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#7ba3fa]/55 rounded-xl w-full">
+                                                    ✏️ Edit
+                                                </button>
+                                                <button type="button" onClick={() => handleClick("delete", task)} className="text-white hover:text-black bg-[#d8d8d8] hover:bg-[#bfbfbf]/90 focus:ring-4 focus:outline-none focus:ring-[#bfbfbf]/50 box-border border border-transparent font-medium leading-5 rounded-base text-sm px-3 py-2.5 text-center inline-flex items-center dark:focus:ring-[#7ba3fa]/55 rounded-xl w-full">
+                                                    🗑️ Delete
+                                                </button>
+                                            </div>
+
+
+
+                                        </div>
                                     </div>
                                 </div>
                             </Card>
