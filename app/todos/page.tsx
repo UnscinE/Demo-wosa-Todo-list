@@ -1,115 +1,135 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import Fab from '@mui/material/Fab';
+import axios from "axios";
 
 import Navbar from "../navbar/navbar";
 import UpcommingTasksList from "../components/UpcomingTaskList";
 import TSQTaskList from "../components/TaskTSQList";
-import TaskList from "../components/Tasklist";
-import { customTheme, customTheme1 } from "../components/theme/cardTheme";
 import { TaskFormModal } from "../components/TaskFormModal";
-import { Task } from '../components/datatype/Task';
-import TSQTask  from "../components/datatype/TSQTask";
 
-import Fab from '@mui/material/Fab';
+import { customTheme, customTheme1 } from "../components/theme/cardTheme";
+
+import { Task } from '../components/datatype/Task';
+import { APITSQTask, TSQTask } from "../components/datatype/TSQTask";
+
 import { PiCardsBold, PiListBulletsBold } from "react-icons/pi";
 import { Datepicker } from "flowbite-react";
 import { IoAdd } from "react-icons/io5";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 
+import { useTSQTaskMutation } from "../components/hook/TSQService";
 
 const TasksPage: React.FC = () => {
 
     const [limit, setlimit] = useState(5);
 
-    const [tasks, setTasksData] = useState<Task[]>(() => {
-        const store = localStorage.getItem("to-do-list-tasks");
-        if (store) {
-            return JSON.parse(store) as Task[];
-        }
-        return [];
-    });
+    // const [tasksDatafromoldCode, setTasksData] = useState<Task[]>(() => {
+    //     const store = localStorage.getItem("to-do-list-tasks");
+    //     if (store) {
+    //         return JSON.parse(store) as Task[];
+    //     }
+    //     return [];
+    // });
 
     //Query function for useQuery
     const fetchTasks = async (limit: number): Promise<TSQTask[]> => {
         //old data src (load from local storage)
-        const storeData = localStorage.getItem("to-do-list-tasks");
-        
+        //const storeData = localStorage.getItem("to-do-list-tasks");
+
         //change to new data src (load from TSQ)
         const response = await axios.get("https://dummyjson.com/todos");
-        console.log("Fetched data froms TSQ: ", response.data.todos);
+        console.log("Fetched data froms TSQ111: ", response.data.todos);
         //if (!storeData) return [];
 
         //return task from api using TSQ management
-        const fullTasks: TSQTask[] = response.data.todos;
+        const Api: APITSQTask[] = response.data.todos;
+        const fullTasks: TSQTask[] = Api.map(tasks => ({
+            ...tasks,
+            datetime: new Date().toLocaleDateString('en-GB'),
+        }));
+
         return fullTasks.slice(0, limit);
-        
+
     };
 
     const useTasks = (limit: number) => {
         return useQuery({
             queryKey: ["tasks", limit],
             queryFn: () => fetchTasks(limit),
-            initialData: []
+            initialData: [
+              //  { id: 1, todo: "Initial Task", completed: false, userId: 8838, datetime: new Date().toLocaleDateString('en-GB') }
+            ],
         });
     };
 
     const { data: taskDataTSQ, isPending, isFetching, refetch } = useTasks(limit);
 
-    console.log("Task data from TSQ: ", taskDataTSQ);
+    console.log("Task data from TSQ test: ", taskDataTSQ);
+
+    const updatedTaskDataTSQ = taskDataTSQ.map(task => ({
+        ...task,
+        datetime: new Date().toLocaleDateString('en-GB'),
+    }));
+
+    console.log("Task data from TSQ Assing new Date: ", updatedTaskDataTSQ);
+
     useEffect(() => {
-        if (tasks) {
-            localStorage.setItem("to-do-list-tasks", JSON.stringify(tasks));
-        }
+        // if (tasksDatafromoldCode) {
+        //     localStorage.setItem("to-do-list-tasks", JSON.stringify(tasksDatafromoldCode));
+        // }
 
         refetch();
 
-    }, [refetch, tasks]);
+    }, [refetch]);
 
     //Callback function from child
     const handleTaskSaved = (task: Task, mode: string) => {
         if (mode === 'add') {
 
-            const store = localStorage.getItem('to-do-list-tasks');
-            const oldTasks = store ? JSON.parse(store) : [];
+            // const store = localStorage.getItem('to-do-list-tasks');
+            // const oldTasks = store ? JSON.parse(store) : [];
 
-            const update = [...oldTasks, task];
+            // const update = [...oldTasks, task];
 
-            localStorage.setItem('to-do-list-tasks', JSON.stringify(update));
-            setTasksData(update);
+            // localStorage.setItem('to-do-list-tasks', JSON.stringify(update));
+            // setTasksData(update);
 
         } else if (mode === 'edit') {
 
-            const newTasksList = tasks.map(targetTask => {
-                return targetTask.id === task.id ? task : targetTask;
-            });
+            // const newTasksList = tasksDatafromoldCode.map(targetTask => {
+            //     return targetTask.id === task.id ? task : targetTask;
+            // });
 
-            localStorage.setItem('to-do-list-tasks', JSON.stringify(newTasksList));
-            setTasksData(newTasksList);
+            // localStorage.setItem('to-do-list-tasks', JSON.stringify(newTasksList));
+            // setTasksData(newTasksList);
 
         } else if (mode === 'delete') {
 
-            const taskNotDelete = tasks.filter((taskToDelete) => taskToDelete.id !== task.id)
-            localStorage.setItem('to-do-list-tasks', JSON.stringify(taskNotDelete));
-            setTasksData(taskNotDelete);
+            // const taskNotDelete = tasksDatafromoldCode.filter((taskToDelete) => taskToDelete.id !== task.id)
+            // localStorage.setItem('to-do-list-tasks', JSON.stringify(taskNotDelete));
+            // setTasksData(taskNotDelete);
 
         }
     }
 
+    //Callback function from child
+    const {handleTSQTaskSaved} = useTSQTaskMutation();
+
     //Update by checkbox
-    const updateBycheckbox = (updateTargetnew: Task) =>
+    const updateBycheckbox = (updateTargetnew: TSQTask) =>
         (e: React.ChangeEvent<HTMLInputElement>) => {
-            const checked = e.target.checked;
+            // const checked = e.target.checked;
 
-            const news = tasks.map((updateTargetold) =>
-                updateTargetold.id === updateTargetnew.id
-                    ? { ...updateTargetold, completed: checked }
-                    : updateTargetold
-            );
+            // const news = tasksDatafromoldCode.map((updateTargetold) =>
+            //     updateTargetold.id === updateTargetnew.id
+            //         ? { ...updateTargetold, completed: checked }
+            //         : updateTargetold
+            // );
 
-            setTasksData(news);
-            localStorage.setItem('to-do-list-tasks', JSON.stringify(news));
+            // setTasksData(news);
+            // localStorage.setItem('to-do-list-tasks', JSON.stringify(news));
         };
 
     //Calendar date management
@@ -129,7 +149,7 @@ const TasksPage: React.FC = () => {
     };
 
     //Filter tasks by selected date
-    const filteredByDateTasks = taskDataTSQ.filter(task => {
+    const filteredByDateTasks = updatedTaskDataTSQ.filter(task => {
         // If no date selected, show all tasks
         if (!selectedDate) return true;
 
@@ -150,6 +170,7 @@ const TasksPage: React.FC = () => {
 
     //Function to parse date string "dd/mm/yyyy" to Date object
     function parseDate(dateStr: string) {
+        if (!dateStr) return new Date();
         const [dayStr, monthStr, yearStr] = dateStr.split('/');
         const day = parseInt(dayStr, 10);
         const month = parseInt(monthStr, 10);
@@ -160,7 +181,7 @@ const TasksPage: React.FC = () => {
     }
 
     //Up comming tasks list (past date) filter
-    const upcommingTasks = tasks.filter(task => {
+    const upcommingTasks = taskDataTSQ.filter(task => {
         const taskDate = parseDate(task.datetime);
         const now = new Date();
 
@@ -201,24 +222,24 @@ const TasksPage: React.FC = () => {
     };
 
     //Task in modal handle
-    const [taskInmodal, setTaskInmodal] = useState<Task>();
+    const [taskInmodal, setTaskInmodal] = useState<TSQTask>();
 
     // Modal form mode
-    const [formMode, setFormMode] = useState<'view' | 'add' | 'edit' | 'close' | 'delete'>('close')
+    const [formMode, setFormMode] = useState<"view" | "add" | "edit" | "close" | "delete">("close")
 
     // ฟังก์ชันที่ถูกเรียกเมื่อปุ่ม FAB ถูกคลิก
-    const handleClick = (mode: 'view' | 'add' | 'edit' | 'delete', taskToView_Edit_Delete?: Task) => {
+    const handleClick = (mode: "view" | "add" | "edit" | "delete", taskToView_Edit_Delete?: TSQTask) => {
 
         setTaskInmodal(taskToView_Edit_Delete)
 
         setIsModalOpen(true)
-        if (mode === 'add') {
+        if (mode === "add") {
             setFormMode(mode)
-        } else if (mode === 'view') {
+        } else if (mode === "view") {
             setFormMode(mode)
-        } else if (mode === 'edit') {
+        } else if (mode === "edit") {
             setFormMode(mode)
-        } else if (mode === 'delete') {
+        } else if (mode === "delete") {
             //setIsModalOpen(false)
             setFormMode(mode)
         }
@@ -351,8 +372,8 @@ const TasksPage: React.FC = () => {
                     isOpen={isModalOpen}
                     onClose={handleCloseModal}
                     formMode={formMode}
-                    taskData={taskInmodal}
-                    onSaveSuccess={handleTaskSaved}
+                    taskData={taskInmodal!}
+                    onSaveSuccess={handleTSQTaskSaved}
                 />
             </main>
         </div>

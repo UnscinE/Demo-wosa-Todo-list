@@ -13,25 +13,18 @@ import {
   Textarea,
 } from "flowbite-react";
 
-import React, { useState, useEffect } from "react";
+import { TSQTask } from "./datatype/TSQTask";
 
-// Task type define
-type Task = {
-  id: number;
-  name: string;
-  //image: string;
-  description: string;
-  //price: string;
-  completed: boolean;
-  datetime: string;
-};
+import React, { useState, useEffect } from "react";
+import { number } from "zod";
+import { randomInt } from "crypto";
 
 interface TaskFormModalProps {
   isOpen: boolean; // สถานะเปิด/ปิด ที่มาจาก Parent
   onClose: () => void; // ฟังก์ชันปิด Modal ที่มาจาก Parent
   formMode: "view" | "add" | "edit" | "close" | "delete";
-  taskData: Task;
-  onSaveSuccess: (formtask: Task, mode: string) => void;
+  taskData: TSQTask;
+  onSaveSuccess: (formtask: TSQTask, mode: "add" | "edit" | "delete") => void;
 }
 
 export const TaskFormModal: React.FC<TaskFormModalProps> = ({
@@ -60,14 +53,15 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
 
   const onSelectedDateChanged = (date: Date | null) => {
     if (formMode === 'edit') {
-      setSelectedDate(parseDate(taskData.datetime));
+      // setSelectedDate(parseDate(taskData.datetime));
     }
-    setSelectedDate(date);
+
+    //setSelectedDate(date);
   }
 
   // State for form fields (used in add/edit)
-  const [taskTitle, setTaskTitle] = useState("");
-  const [taskDetails, setTaskDetails] = useState("");
+  const [taskUserID, setTaskUserID] = useState(0);
+  const [taskTodo, setTaskDetails] = useState("");
   const [completestatus, setComplete] = useState<boolean>(false);
 
   //const [modaltask, setModaltask] = useState<Task>();
@@ -77,11 +71,11 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
     if (isOpen) {
       if (formMode === "edit" && taskData) {
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setTaskTitle(taskData.name ?? "");
-        setTaskDetails(taskData.description ?? "");
+        setTaskUserID(taskData.userId ?? 0);
+        setTaskDetails(taskData.todo ?? "");
         setComplete(taskData.completed ?? "");
       } else {
-        setTaskTitle("");
+        setTaskUserID(Math.floor(Math.random() * 208) + 1);
         setTaskDetails("");
       }
     }
@@ -94,7 +88,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
 
   // Close handler
   function handleClose() {
-    setTaskTitle("");
+    setTaskUserID(0);
     setTaskDetails("");
     onClose();
   }
@@ -103,45 +97,35 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Task Submitted:", { title: taskTitle, details: taskDetails, completestatus: completestatus });
+    console.log("Task Submitted:", { UserID: taskUserID, taskTodo: taskTodo, taskCompletestatus: completestatus });
     // TODO: save logic here
 
     if (formMode === 'add') {
 
-      const newTask: Task = {
-        id: Date.now(),
-        name: taskTitle,
-        description: taskDetails,
-
-        // price: "0.00",
-        //image: "default-image-url.jpg",
-
+      const newTask: TSQTask = {
+        id: 0,
+        userId: taskUserID,
+        todo: taskTodo,
         completed: false,
-        datetime: selectedDate ? selectedDate.toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB'),
+        datetime: new Date().toLocaleDateString('en-GB'), //dd/mm/yyyy
       };
 
       //Sent new task back to parent
       onSaveSuccess(newTask, formMode);
     } else if (formMode === 'edit') {
 
-      const editTask: Task = {
+      const editTask: TSQTask = {
         id: taskData.id,
-        name: taskTitle,
-        description: taskDetails,
-
-        // price: "0.00",
-        // image: "default-image-url.jpg",
-
+        userId: taskUserID,
+        todo: taskTodo,
         completed: completestatus,
-        datetime: selectedDate ? selectedDate.toLocaleDateString('en-GB') : taskData.datetime,
+        datetime: taskData.datetime,
       };
 
       onSaveSuccess(editTask, formMode);
-    } else {
+    } else if (formMode === 'delete') {
       onSaveSuccess(taskData, formMode);
     }
-
-
     handleClose();
   };
 
@@ -170,15 +154,11 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
 
       <ModalBody>
         {formMode === "view" && taskData ? (
+          // View Mode
           <div className="space-y-4">
-            <h2 className="text-lg font-semibold wrap-break-words">{taskData.name}</h2>
-            {/* <img
-              src={taskData.image}
-              alt={taskData.name}
-              className="w-32 h-32 object-cover rounded"
-            /> */}
-            <p>{taskData.description}</p>
-            {/* <p>💰 Price: {taskData.price}</p> */}
+            <h2 className="text-lg font-semibold wrap-break-words">{taskData.id}</h2>
+            <p>UserID: {taskData.userId}</p>
+            <p>{taskData.todo}</p>
             <p>✅ Status: {taskData.completed ? "Completed" : "Pending"}</p>
             <p>📅 Date: {taskData.datetime}</p>
             <div className="flex justify-end">
@@ -188,6 +168,7 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
             </div>
           </div>
         ) : (
+          // Delete Mode
           <form onSubmit={handleSubmit} className="space-y-6">
             {formMode === 'delete' ? (
               <div className="flex flex-col gap-3">
@@ -210,42 +191,31 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
 
 
             ) : (
-
+              // Add Mode
               <div className="flex flex-col gap-3">
-                {/* Field 1: Title */}
+                {/* Field 1: UserID */}
                 <div>
-                  <Label htmlFor="taskTitle">Task</Label>
+                  <Label htmlFor="UserID">User ID</Label>
                   <TextInput
-                    id="taskTitle"
-                    placeholder="Task title..."
-                    value={taskTitle}
-                    onChange={(event) => setTaskTitle(event.target.value)}
+                    id="UserID"
+                    type="number"
+                    placeholder='1-208'
+                    min={1}
+                    max={208}
+                    value={taskUserID}
+                    onChange={(event) => setTaskUserID(event.target.valueAsNumber)}
                     required
                   />
                 </div>
 
-                {/* Field 2: Date */}
+                {/* Field 2: Todo */}
                 <div>
-                  <Label htmlFor="taskDate">Date 🗓️</Label>
-                  {formMode === 'edit' ? (<Datepicker
-                    id="taskDate"
-                    onChange={onSelectedDateChanged} // May need specific prop based on your library
-                    value={parseDate(taskData.datetime)}
-                  />) : (<Datepicker
-                    id="taskDate"
-                    onChange={onSelectedDateChanged}
-                  />)
-                  }
-                </div>
-
-                {/* Field 3: Description */}
-                <div>
-                  <Label htmlFor="taskDetails">Description ℹ️</Label>
+                  <Label htmlFor="taskTodo">Todo ℹ️</Label>
                   <Textarea
-                    id="taskDetails"
+                    id="taskTodo"
                     placeholder="Detail of your task..."
                     color="gray"
-                    value={taskDetails}
+                    value={taskTodo}
                     onChange={(event) => setTaskDetails(event.target.value)}
                     rows={6}
                   />
@@ -254,7 +224,6 @@ export const TaskFormModal: React.FC<TaskFormModalProps> = ({
                 {/* Buttons */}
                 <div className="w-full flex justify-between gap-3">
                   <div className="flex items-center gap-1">
-
 
                     <Checkbox color="default" defaultChecked={taskData?.completed} onChange={(e) => setComplete(e.target.checked)}>
 

@@ -3,9 +3,13 @@
 //         "completed": false,
 //             "userId": 152
 
-export type TSQTask = {
-    id : number,
-    todo : string,
-    completed : boolean,
-    userId : number
+export type TSQTask = APITSQTask & {
+    datetime: string,
+};
+
+export type APITSQTask = {
+  id: number;
+  todo: string;
+  completed: boolean;
+  userId: number;
 };

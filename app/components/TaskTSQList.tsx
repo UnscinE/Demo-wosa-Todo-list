@@ -4,11 +4,11 @@ import { TSQTask } from "./datatype/TSQTask";
 
 type Props = {
     getViewClass: () => string;
-    customTheme: never;
+    customTheme: object;
     filteredTasks: TSQTask[];
     filterMode: string;
     viewMode: string;
-    handleClick: (mode: string, task: TSQTask) => void;
+    handleClick: (mode: "view" | "add" | "edit" | "delete", task: TSQTask) => void;
     updateBycheckbox: (task: TSQTask) => (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
@@ -24,6 +24,7 @@ export const TSQTaskList: React.FC<Props> = ({
     return (
         <div className="h-11/12 p-4 scrollbar-hide overflow-y-auto">
             <div className={`${getViewClass()} items-stretch`}>
+                <ThemeProvider theme={customTheme}>
                 <AnimatePresence mode="popLayout">
                     {filteredTasks.map((task, index) => (
 
@@ -75,9 +76,6 @@ export const TSQTaskList: React.FC<Props> = ({
                                                     🗑️ Delete
                                                 </button>
                                             </div>
-
-
-
                                         </div>
                                     </div>
                                 </div>
@@ -85,8 +83,9 @@ export const TSQTaskList: React.FC<Props> = ({
                         </motion.div>
                     ))}
                 </AnimatePresence>
+                </ThemeProvider>
             </div>
-        </div>
+            </div>
     )
 };
 

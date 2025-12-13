@@ -10,7 +10,7 @@ type Props = {
     viewMode: string;
     handleClick: (mode: string, task: Task) => void;
     updateBycheckbox: (task: Task) => (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
+};
 
 export const taskList: React.FC<Props> = ({
     getViewClass,

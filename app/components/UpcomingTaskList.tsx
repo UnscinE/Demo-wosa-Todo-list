@@ -4,12 +4,12 @@ import { Card, Checkbox, ThemeProvider } from "flowbite-react";
 import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 
-import { Task } from "./datatype/Task";
+import { TSQTask } from "./datatype/TSQTask";
 
 type Props = {
-    upcommingTasks: Task[];
-    customTheme1: never;
-    updateBycheckbox: (task: Task) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+    upcommingTasks: TSQTask[];
+    customTheme1: object;
+    updateBycheckbox: (task: TSQTask) => (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 
@@ -40,10 +40,10 @@ export const upcommingTasksList: React.FC<Props> = ({
 
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-medium text-heading truncate">
-                                            {task.name}
+                                            {task.userId}
                                         </p>
                                         <p className="text-sm text-body truncate">
-                                            {task.description}
+                                            {task.todo}
                                         </p>
                                     </div>
                                     <div className="flex flex-col items-center text-base font-semibold text-heading">
