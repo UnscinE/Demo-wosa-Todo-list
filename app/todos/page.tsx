@@ -12,7 +12,6 @@ import { TaskFormModal } from "../components/TaskFormModal";
 
 import { customTheme, customTheme1 } from "../components/theme/cardTheme";
 
-import { Task } from '../components/datatype/Task';
 import { APITSQTask, TSQTask } from "../components/datatype/TSQTask";
 
 import { PiCardsBold, PiListBulletsBold } from "react-icons/pi";
@@ -25,14 +24,6 @@ const TasksPage: React.FC = () => {
 
     const [limit, setlimit] = useState(5);
 
-    // const [tasksDatafromoldCode, setTasksData] = useState<Task[]>(() => {
-    //     const store = localStorage.getItem("to-do-list-tasks");
-    //     if (store) {
-    //         return JSON.parse(store) as Task[];
-    //     }
-    //     return [];
-    // });
-
     //Query function for useQuery
     const fetchTasks = async (limit: number): Promise<TSQTask[]> => {
         //old data src (load from local storage)
@@ -40,8 +31,9 @@ const TasksPage: React.FC = () => {
 
         //change to new data src (load from TSQ)
         const response = await axios.get("https://dummyjson.com/todos");
+
+        //Debuging command for check data are fetched from api
         console.log("Fetched data froms TSQ111: ", response.data.todos);
-        //if (!storeData) return [];
 
         //return task from api using TSQ management
         const Api: APITSQTask[] = response.data.todos;
@@ -76,43 +68,10 @@ const TasksPage: React.FC = () => {
     console.log("Task data from TSQ Assing new Date: ", updatedTaskDataTSQ);
 
     useEffect(() => {
-        // if (tasksDatafromoldCode) {
-        //     localStorage.setItem("to-do-list-tasks", JSON.stringify(tasksDatafromoldCode));
-        // }
 
         refetch();
 
     }, [refetch]);
-
-    //Callback function from child
-    const handleTaskSaved = (task: Task, mode: string) => {
-        if (mode === 'add') {
-
-            // const store = localStorage.getItem('to-do-list-tasks');
-            // const oldTasks = store ? JSON.parse(store) : [];
-
-            // const update = [...oldTasks, task];
-
-            // localStorage.setItem('to-do-list-tasks', JSON.stringify(update));
-            // setTasksData(update);
-
-        } else if (mode === 'edit') {
-
-            // const newTasksList = tasksDatafromoldCode.map(targetTask => {
-            //     return targetTask.id === task.id ? task : targetTask;
-            // });
-
-            // localStorage.setItem('to-do-list-tasks', JSON.stringify(newTasksList));
-            // setTasksData(newTasksList);
-
-        } else if (mode === 'delete') {
-
-            // const taskNotDelete = tasksDatafromoldCode.filter((taskToDelete) => taskToDelete.id !== task.id)
-            // localStorage.setItem('to-do-list-tasks', JSON.stringify(taskNotDelete));
-            // setTasksData(taskNotDelete);
-
-        }
-    }
 
     //Callback function from child
     const {handleTSQTaskSaved} = useTSQTaskMutation();

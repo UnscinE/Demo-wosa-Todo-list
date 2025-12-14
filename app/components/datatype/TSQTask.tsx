@@ -4,7 +4,7 @@
 //             "userId": 152
 
 export type TSQTask = APITSQTask & {
-    datetime: string,
+  datetime: string,
 };
 
 export type APITSQTask = {
